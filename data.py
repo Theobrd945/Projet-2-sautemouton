@@ -33,35 +33,35 @@ class Bloc:
         self.largeur = largeur
         self.hauteur = hauteur
 
-    def get_typebloc():
+    def get_typebloc(self):
         return self.typebloc
 
 #type: mur sol arrivé
 class Niveau:
 
-    def __init__(self, personnage, liste_bloc):
+    def __init__(self, personnage, dico_bloc):
         self.personnage=personnage
-        self.liste_bloc=liste_bloc
+        self.dico_bloc=dico_bloc
 
     def get_fin(self):
-        for e in self.liste_bloc:
-            if e.get_typebloc()=="arrivé":
-                return e    
+            
         
 
 
 
     def save(self,personnage,liste_bloc):
-        fichier=open("niveau.txt","w")
+        fichier = open("niveau.txt","w")
         fichier.write(f"{self.personnage.get_position()}\n")
-        fichier.write()
+        fichier.write(f"{self.get_fin()}\n")
+        for e in self.fichier():
+
 
 
 
 class Vecteur:
-    def __init__(self,x,y):
-        self.x=x
-        self.y=y
+    def __init__(self):
+        self.x=0
+        self.y=0
 
 
 
