@@ -1,3 +1,5 @@
+from operator import and_
+
 from fltk import *
 from data import Niveau
 
@@ -13,17 +15,17 @@ class HomeScreen:
         self.width = 1000
         self.height = 800
 
-    def is_click_on_button(self,event_location) -> bool:
+    def is_click_on_button(self, event_location) -> bool:
 
         return (self.btn_top_left <= abscisse(event_location) <= self.btn_top_right
-                and self.btn_bottom_left <= abscisse(event_location) <= self.btn_bottom_right)
+                and self.btn_bottom_left <= ordonnee(event_location) <= self.btn_bottom_right)
 
     def init_window(self):
 
         cree_fenetre(self.width, self.height)
 
         x, y = 500, 400
-        image(x, y, fichier='assets/img3.jpg',largeur=self.width, hauteur=self.height, ancrage='center', tag='im')
+        image(x, y, fichier='assets/img3.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='im')
 
     def launch(self):
 
@@ -34,7 +36,7 @@ class HomeScreen:
         while running:
 
             ev = donne_ev()
-            tev : str = type_ev(ev)
+            tev: str = type_ev(ev)
 
             if tev == "ClicGauche" and self.is_click_on_button(ev):
 
@@ -52,14 +54,37 @@ class HomeScreen:
 class Map:
 
     def __init__(self) -> None:
-        pass
+        self.width = 1000
+        self.height = 800
+
+        self.btn_niveau_left = 410
+        self.btn_niveau_right = 590
+
+        self.btn_niveau1_top = 165
+        self.btn_niveau1_bottom = 230
+
+        self.btn_niveau2_top = 400
+        self.btn_niveau2_bottom = 470
+
+        self.btn_niveau3_top = 540
+        self.btn_niveau3_bottom = 610
+
+    def init_window(self):
+
+        cree_fenetre(self.width, self.height)
+
+        x, y = 500, 400
+
+        image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='carte')
+
+    def isClick_on_button(self, event_location, btn_top, btn_bot) -> bool:
+
+        return (self.btn_niveau_left <= abscisse(event_location) <= self.btn_niveau_right
+                and btn_top <= ordonnee(event_location) <= btn_bot)
 
     def choose_level(self):
 
-        cree_fenetre(1000, 800)
-
-        image(500, 400, 'assets/carte.jpg',
-              largeur=1000, hauteur=800, ancrage='center', tag='carte')
+        self.init_window()
 
         while True:
 
@@ -68,17 +93,15 @@ class Map:
 
             if type_event == "ClicGauche":
 
-                aligne_horizontale = 410 <= abscisse(event) <= 590
-
-                if aligne_horizontale and (165 <= ordonnee(event) <= 230):
+                if self.isClick_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
 
                     return "Niveau1"
 
-                elif aligne_horizontale and (400 <= ordonnee(event) <= 470):
+                elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
 
                     return "Niveau2"
 
-                elif aligne_horizontale and (540 <= ordonnee(event) <= 610):
+                elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
 
                     return "Niveau3"
 
