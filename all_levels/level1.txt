@@ -1,0 +1,13 @@
+[PERSONNAGE]
+position=50,50
+largeur=20
+hauteur=20
+
+[BLOCS]
+mur;0,0;300;10
+mur;0,0;10;300
+mur;290,0;10;300
+mur;0,290;300;10
+glace;100,100;50;50
+elastique;200,100;50;50
+objectif;250,250;30;30
