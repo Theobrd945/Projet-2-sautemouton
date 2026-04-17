@@ -1,4 +1,4 @@
-from data import Personnage, Vecteur
+from data import Personnage
 
 class Position:
     """

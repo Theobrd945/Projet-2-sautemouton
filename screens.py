@@ -1,7 +1,5 @@
-from operator import and_
 
 from fltk import *
-from data import Niveau
 
 
 class HomeScreen:

@@ -3,7 +3,7 @@ import affichage_graphique
 
 
 def debut():
-    affichage_graphique.Demarrage.ecran_accueil()
+    screens.Demarrage.ecran_accueil()
 
     debut()
 # tache 1: Theo
