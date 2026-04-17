@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-#TODO: vecteur, pair
-=======
-from data import Personnage
->>>>>>> refs/remotes/origin/main
-
 from data import Personnage
 from math import sqrt, atan2, cos, sin, pi
 
@@ -27,6 +21,7 @@ class Vecteur:
         return sqrt(dx ** 2 + dy ** 2)
 
     def __add__(self, other: 'Vecteur') -> 'Vecteur': ...
+
 
 class Vecteur2:
     def __init__(self, norme: float = ORIGIN, angle: float = ORIGIN) -> None:
