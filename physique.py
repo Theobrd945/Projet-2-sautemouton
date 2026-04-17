@@ -20,7 +20,10 @@ class Vecteur:
         dx, dy = self.origin.x - self.dest.x, self.origin.y - self.dest.y
         return sqrt(dx ** 2 + dy ** 2)
 
-    def __add__(self, other: 'Vecteur') -> 'Vecteur': ...
+    def __add__(self, other: 'Vecteur') -> 'Vecteur':
+        origin = Pair(self.origin.x + other.origin.x, self.origin.y + other.origin.y)
+        dest = Pair(self.dest.x + other.dest.x, self.dest.y + other.dest.y)
+        return Vecteur(origin.x + dest.x, origin.y + dest.y)
 
 
 class Vecteur2:
@@ -83,47 +86,7 @@ class MoteurPhysique:
 
 
 
-
-
-
-
 from pprint import pprint
 # battrie de tests
 if __name__ == "__main__":
-    personnage = Personnage(ORIGIN)
-    gravite = Vecteur2(10, 3/2 * pi)     # (0, 10)
-    mp = MoteurPhysique(personnage, gravite)
-    mp.onclick((10, 10))
-
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
-    pprint(mp.personnage.get_position())
-    mp.update()
+    ...
