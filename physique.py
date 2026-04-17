@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #TODO: vecteur, pair
+=======
+from data import Personnage
+>>>>>>> refs/remotes/origin/main
 
 from data import Personnage
 from math import sqrt, atan2, cos, sin, pi

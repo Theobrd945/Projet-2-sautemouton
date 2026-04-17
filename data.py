@@ -48,6 +48,8 @@ class Configuration:
 
     def __init__(self,nom_niveaux):
         self.nom_niveaux=nom_niveaux
+        self.personnage=None
+        self.dico_bloc={}
         self.load(nom_niveaux)#dico avec comme cle le typebloc
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
 
@@ -113,6 +115,7 @@ class Configuration:
                     self.dico_bloc[typebloc] = []
 
                 self.dico_bloc[typebloc].append(bloc)
+
 
 
 def collision(personnage, dico_bloc):
