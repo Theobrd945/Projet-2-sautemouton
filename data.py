@@ -42,8 +42,8 @@ class Personnage:
 class Bloc:
 
     def __init__(self, position, typebloc, largeur, hauteur)-> None:
-        self.__position = position
-        self.__typebloc = typebloc
+        self.__position = position #(x,y)
+        self.__typebloc = typebloc #elastique,glace,bouee,derapage,objectif
         self.__largeur = largeur
         self.__hauteur = hauteur
 
@@ -66,6 +66,10 @@ class Niveau:
         self.personnage = personnage
         self.dico_bloc=dico_bloc #dico avec comme cle le typebloc
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
+
+    def get_objectif(self):
+        return self.dico_bloc["objectif"]
+
 
     def save(self):
         with open("niveau.txt", "w") as f:
@@ -141,6 +145,9 @@ def collision(personnage, dico_bloc):
                 return bloc
 
     return None
+
+def victoire(personnage, objectif, dico_bloc):
+    return objectif==collision(personnage,dico_bloc)
 
 
 
