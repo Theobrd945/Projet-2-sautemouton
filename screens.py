@@ -1,6 +1,5 @@
 
 from fltk import *
-from fltk import *
 from data import *
 
 
