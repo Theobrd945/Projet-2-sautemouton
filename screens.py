@@ -1,5 +1,7 @@
 
 from fltk import *
+from fltk import *
+from data import *
 
 
 class HomeScreen:
@@ -111,12 +113,16 @@ class Map:
         ferme_fenetre()
 
 
-class Niveau1:
+class Level1:
 
     def __init__(self) -> None:
 
         self.width = 1000
         self.height = 800
+
+        self.file_level = Configuration("all_level/level1")
+
+        self.bloc = self.file_level.dico_bloc
         
 
     def init_window(self):
@@ -130,6 +136,21 @@ class Niveau1:
     def launch_level(self):
         
         self.init_window()
+
+        running = True
+
+        while running :
+
+            event = donne_ev()
+            type_event = type_ev(event)
+
+            if type_event == "Quitte" :
+
+                running = False 
+
+            mise_a_jour()
+
+        ferme_fenetre()
 
 
 test = HomeScreen()
