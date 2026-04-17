@@ -3,38 +3,22 @@
 class Personnage:
 
     def __init__(self, position) -> None:
-        self.__vitesse = (0,0)
         self.__position = position
-        self.__pas = 0.0
         self.__largeur = 0
         self.__hauteur = 0
 
 
-
-    def set_pas(self,pas):
-        self.__pas = pas
-
-    def get_pas(self) -> float:
-        return self.__pas
-
-    def get_position(self):
+    def get_position(self) -> tuple:
         return self.__position
 
-    def get_vitesse(self):
-        return self.__vitesse
-
-    def get_largeur(self):
+    def get_largeur(self) -> float:
         return self.__largeur
 
-    def get_hauteur(self):
+    def get_hauteur(self) -> float:
         return self.__hauteur
 
-    def set_largeur(self, largeur):
-        self.__largeur = largeur
-
-    def set_hauteur(self, hauteur):
-        self.__hauteur = hauteur
-
+    def set_position(self,position) -> None:
+        self.__position = position
 
 
 
@@ -47,32 +31,32 @@ class Bloc:
         self.__largeur = largeur
         self.__hauteur = hauteur
 
-    def get_typebloc(self):
+    def get_typebloc(self) -> str:
         return self.__typebloc
 
-    def get_position(self):
+    def get_position(self) -> tuple:
         return self.__position
 
-    def get_largeur(self):
+    def get_largeur(self) -> float:
         return self.__largeur
 
-    def get_hauteur(self):
+    def get_hauteur(self) -> float:
         return self.__hauteur
 
 
-class Niveau:
+class Configuration:
 
-    def __init__(self, personnage, dico_bloc):
-        self.personnage = personnage
-        self.dico_bloc=dico_bloc #dico avec comme cle le typebloc
+    def __init__(self,nom_niveaux):
+        self.nom_niveaux=nom_niveaux
+        self.load(nom_niveaux)#dico avec comme cle le typebloc
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
 
-    def get_objectif(self):
+    def get_objectif(self) -> Bloc:
         return self.dico_bloc["objectif"]
 
 
-    def save(self):
-        with open("niveau.txt", "w") as f:
+    def save(self,nom) -> None:
+        with open(nom, "w") as f:
             f.write("[PERSONNAGE]\n")
             x, y = self.personnage.get_position()
             f.write(f"position={x},{y}\n")
@@ -84,8 +68,8 @@ class Niveau:
                     x, y = bloc.get_position()
                     f.write(f"{bloc.get_typebloc()};{x},{y};{bloc.get_largeur()};{bloc.get_hauteur()}\n")
 
-    def load(self):
-        with open("niveau.txt", "r") as f:
+    def load(self,nom_niveaux) -> None:
+        with open(nom_niveaux, "r") as f:
             lignes = f.readlines()
 
         mode = None
@@ -146,15 +130,11 @@ def collision(personnage, dico_bloc):
 
     return None
 
-def victoire(personnage, objectif, dico_bloc):
+def victoire(personnage, objectif, dico_bloc) -> bool:
     return objectif==collision(personnage,dico_bloc)
 
 
 
-class Vecteur:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
 
 
 
