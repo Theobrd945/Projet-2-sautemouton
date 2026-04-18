@@ -1,95 +1,112 @@
+from typing import Callable
+
 from data import Personnage
-<<<<<<< HEAD
-=======
-from math import sqrt, atan2, cos, sin, pi
->>>>>>> fb0ea801260f48e8de569856017ab92f07b49099
+from math import sin, pi, sqrt, cos, atan2
 
-ORIGIN = (0, 0)
-
-
-class Pair:
-    def __init__(self, x: float | int, y: float | int) -> None:
+class Couple:
+    def __init__(self, x: float, y: float):
         self.x = x
         self.y = y
 
+    """ couple (couple, y) de réels """
 
-class Vecteur:
-    def __init__(self, origin: Pair, dest: Pair) -> None:
-        self.origin = origin
-        self.dest = dest
-        self.norme = self.get_norme()
+    def __add__(self, other: 'Couple') -> 'Couple':
+        return Couple(self.x + other.x, self.y + other.y)
 
-    def get_norme(self) -> float:
-        dx, dy = self.origin.x - self.dest.x, self.origin.y - self.dest.y
-        return sqrt(dx ** 2 + dy ** 2)
-
-    def __add__(self, other: 'Vecteur') -> 'Vecteur':
-        origin = Pair(self.origin.x + other.origin.x, self.origin.y + other.origin.y)
-        dest = Pair(self.dest.x + other.dest.x, self.dest.y + other.dest.y)
-        return Vecteur(origin.x + dest.x, origin.y + dest.y)
-
-
-class Vecteur2:
-    def __init__(self, norme: float = ORIGIN, angle: float = ORIGIN) -> None:
-        self.norme: float = norme
-        self.angle: float = angle
+    def __sub__(self, other: 'Couple') -> 'Couple':
+        return Couple(self.x - other.x, self.y - other.y)
 
     def __str__(self) -> str:
-        return f"({self.angle}rad, {self.norme}u)"
-
-    def __add__(self, other: 'Vecteur2') -> 'Vecteur2':
-        sXY: tuple[int, int] = self.to_pairXY()
-        otherXY: tuple[int, int] = other.to_pairXY()
-        dx, dy = sXY[0] + otherXY[0], sXY[1] + otherXY[1]
-        res = Vecteur2()
-        return res.from_pairXY((dx, dy))
-
-    def from_pairXY(self, pair: tuple[int, int], origin: tuple[int, int] = ORIGIN) -> 'Vecteur2':
-        dx, dy = pair[0] - origin[0], pair[1] - origin[1]
-        self.norme = sqrt(dx ** 2 + dy ** 2)
-        self.angle = atan2(dx, dy)
-        return self
-
-    def to_pairXY(self, origin: tuple[float, float] = ORIGIN) -> tuple[float, float]:
-        #TODO: ORIGIN
-        return self.norme * -cos(pi - self.angle), self.norme * sin(pi - self.angle)
-
-NULVEC = Vecteur2(0, 0)
+        return f"({self.x}, {self.y})"
 
 
+# noinspection PyPep8Naming
+def tuple_merge(T: tuple) -> Couple:
+    """
+    affiche un avertissement à chaque utilisation.
+    Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
+    """
+    print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire")
+    return Couple(T[0], T[1])
+
+
+# noinspection PyPep8Naming
+def couple_split(T: Couple) -> tuple:
+    """
+        affiche un avertissement à chaque utilisation.
+        Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
+        """
+    print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire")
+    return T.x, T.y
+
+
+class Vecteur:
+    """ couple de paire """
+
+    def __init__(self, origin: Couple, destination: Couple):
+        self.origin = origin
+        self.destination = destination
+
+    def __add__(self, other: 'Vecteur') -> 'Vecteur':
+        return Vecteur(self.origin + other.origin, self.destination + other.destination)
+
+    def __str__(self) -> str:
+        return f"{self.origin} -> {self.destination} ({self.norme()}u, {self.angle()}rad)"
+
+    def angle(self) -> float:
+        dx, dy = abs(self.origin.x - self.destination.x), abs(self.origin.y - self.destination.y)
+        return atan2(dx, dy)
+
+    def norme(self):
+        dx, dy = abs(self.origin.x - self.destination.x), abs(self.origin.y - self.destination.y)
+        return sqrt(dx ** 2 + dy ** 2)
+
+ORIGIN = Couple(0, 0)
+NULVEC = Vecteur(ORIGIN, ORIGIN)
+demie_vie = (lambda couple: Couple(couple.x / 2, couple.y / 2))
+
+def vec_from(r: float, theta: float) -> Vecteur:
+    return Vecteur(ORIGIN, Couple(r * -cos(pi - theta), r * sin(pi - theta)))
+
+# TODO: niveaux et collision
 class MoteurPhysique:
-    def __init__(self, personnage: Personnage, gravite: Vecteur2 = None, vmax: float = 100.0) -> None:
+    def __init__(self, personnage: Personnage, vmax: float, gravite: float = 9.8, resistance: Callable = demie_vie):
         self.personnage = personnage
-        self.gravite = gravite
         self.vmax = vmax
-        self.vitesse: Vecteur2 = NULVEC
+        self.vmin = 0.005
+        self.gravite = gravite
+        self.vitesse: Couple = ORIGIN       # vx, vy
+        self.resistance = resistance        # resistance de l'air
 
-    def update(self) -> None:
-        if (self.vitesse.norme < 0.003):
-            self.vitesse = NULVEC
+    def onclick(self, click: Couple) -> None:
+        curr_pos = tuple_merge(self.personnage.get_position())
+        self.vitesse += (click - curr_pos)
 
-        curr_pos = self.personnage.get_position()
-        self.personnage.set_position(
-            curr_pos + self.vitesse.to_pairXY(curr_pos)
-        )
+    def update(self):
+        self.vitesse -= self.resistance(self.vitesse)
+        self.vitesse -= Couple(0.0, self.gravite)
 
-    def onclick(self, clickpos: tuple[int, int]) -> None:
-        vec = Vecteur2()
-        vec.from_pairXY(clickpos, self.personnage.get_position())
-        vec += self.gravite
-        vec.norme = min(self.vmax, vec.norme)
-        self.vitesse += vec
+        if abs(self.vitesse.x) < self.vmin:      self.vitesse.x = 0.0
+        if abs(self.vitesse.y) < self.vmin:      self.vitesse.y = 0.0
 
+        self.vitesse.x = min(self.vmax, self.vitesse.x)
+        self.vitesse.y = min(self.vmax, self.vitesse.y)
 
-
-
-
-
-
+        curr_pos = tuple_merge(self.personnage.get_position())
+        curr_pos += self.vitesse
+        self.personnage.set_position(couple_split(curr_pos))
 
 
+if __name__ == '__main__':
+    p = Personnage((0, 0))
+    mp = MoteurPhysique(p, 20)
+    mp.onclick(Couple(100, 100))
 
-from pprint import pprint
-# battrie de tests
-if __name__ == "__main__":
-    ...
+    mp.update()
+    counter = 100
+    while counter:
+        print()
+        print(f"{mp.vitesse.__str__() = }")
+        print(f"{p.get_position() = }")
+        mp.update()
+        counter -= 1
