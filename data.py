@@ -2,10 +2,10 @@
 
 class Personnage:
 
-    def __init__(self, position) -> None:
+    def __init__(self, position,largeur,hauteur) -> None:
         self.__position = position
-        self.__largeur = 0
-        self.__hauteur = 0
+        self.__largeur = largeur
+        self.__hauteur = hauteur
 
 
     def get_position(self) -> tuple:
@@ -19,6 +19,10 @@ class Personnage:
 
     def set_position(self,position) -> None:
         self.__position = position
+
+    def move(self, dx, dy):
+        x, y = self.__position
+        self.__position = (x + dx, y + dy)
 
 
 
