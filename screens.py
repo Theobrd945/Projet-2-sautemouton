@@ -1,8 +1,6 @@
-from operator import and_
-
 from fltk import *
-from data import Niveau
-
+"""from data import Configuration
+"""
 
 class HomeScreen:
 
