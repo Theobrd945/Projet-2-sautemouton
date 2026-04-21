@@ -1,5 +1,3 @@
-from pyxel.pyxel_wrapper import btn
-
 from fltk import *
 from data import *
 
@@ -50,6 +48,7 @@ class HomeScreen:
 
         ferme_fenetre()
 
+
 class Map:
 
     def __init__(self) -> None:
@@ -67,6 +66,8 @@ class Map:
 
         self.btn_niveau1_top = 540
         self.btn_niveau1_bottom = 610
+
+        self.launch_level = True
 
     def init_window(self):
 
@@ -98,30 +99,32 @@ class Map:
 
                 if self.isClick_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
 
-                    level_is = 3
+                    level_is = 2
 
                     running = False
 
                 elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
 
-                    level_is = 2
+                    level_is = 1
 
                     running = False
 
                 elif self.isClick_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
 
-                    level_is = 1
+                    level_is = 0
 
                     running = False
 
             if type_event == 'Quitte':  # on sort de la boucle
                 running = False
+                self.launch_level = False
 
             mise_a_jour()
 
         ferme_fenetre()
 
         return level_is
+
 
 class Level1:
 
@@ -130,10 +133,15 @@ class Level1:
         self.width = 1000
         self.height = 800
 
-        """self.file_level = Configuration("all_level/level1")
+        """self.file_level = Configuration("all_level/level1.txt")
 
         self.bloc = self.file_level.dico_bloc"""
-        
+
+        self.blocs = {
+            "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
+            "plateforms": [(0, 440, 125, 490), (195, 370, 305, 410), (400, 345, 550, 390), (650, 345, 810, 390),
+                           (230, 525, 345, 575), (450, 650, 575, 750)]
+        }
 
     def init_window(self):
 
@@ -141,26 +149,35 @@ class Level1:
 
         x, y = 500, 400
 
-        image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='level1')
+        image(x, y, 'assets/img_level_1.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='level1')
+
+    def init_level(self):
+
+        for key, value in self.blocs.items():
+
+            for coord in value:
+                print(coord)
+
+                rectangle(coord[0], coord[1], coord[2], coord[3])
 
     def launch_level(self):
-        
-        self.init_window()
 
+        self.init_window()
+        self.init_level()
         running = True
 
-        while running :
+        while running:
 
             event = donne_ev()
             type_event = type_ev(event)
 
-            if type_event == "Quitte" :
-
-                running = False 
+            if type_event == "Quitte":
+                running = False
 
             mise_a_jour()
 
         ferme_fenetre()
+
 
 class Level2:
     def __init__(self) -> None:
@@ -171,14 +188,12 @@ class Level2:
 
         self.bloc = self.file_level.dico_bloc"""
 
-
     def init_window(self):
         cree_fenetre(self.width, self.height)
 
         x, y = 500, 400
 
         image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='level2')
-
 
     def launch_level(self):
         self.init_window()
@@ -196,6 +211,7 @@ class Level2:
             mise_a_jour()
 
         ferme_fenetre()
+
 
 class Level3:
 
@@ -207,14 +223,12 @@ class Level3:
 
         self.bloc = self.file_level.dico_bloc"""
 
-
     def init_window(self):
         cree_fenetre(self.width, self.height)
 
         x, y = 500, 400
 
         image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='level3')
-
 
     def launch_level(self):
         self.init_window()
@@ -233,6 +247,7 @@ class Level3:
 
         ferme_fenetre()
 
+
 test = HomeScreen()
 test.launch()
 
@@ -241,4 +256,8 @@ niveau = carte.choose_level()
 
 levels = [Level1(), Level2(), Level3()]
 
-levels[niveau].launch_level()
+print(niveau)
+
+if carte.launch_level:
+    levels[niveau].launch_level()
+
