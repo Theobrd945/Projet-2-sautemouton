@@ -126,22 +126,15 @@ class Map:
         return level_is
 
 
-class Level1:
+class Level:
 
-    def __init__(self) -> None:
+    def __init__(self, blocs, img) -> None:
 
         self.width = 1000
         self.height = 800
 
-        """self.file_level = Configuration("all_level/level1.txt")
-
-        self.bloc = self.file_level.dico_bloc"""
-
-        self.blocs = {
-            "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
-            "plateforms": [(0, 440, 125, 490), (195, 370, 305, 410), (400, 345, 550, 390), (650, 345, 810, 390),
-                           (230, 525, 345, 575), (450, 650, 575, 750)]
-        }
+        self.blocs = blocs
+        self.img = img
 
     def init_window(self):
 
@@ -149,54 +142,20 @@ class Level1:
 
         x, y = 500, 400
 
-        image(x, y, 'assets/img_level_1.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='level1')
+        image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
     def init_level(self):
 
         for key, value in self.blocs.items():
 
             for coord in value:
-                print(coord)
 
-                rectangle(coord[0], coord[1], coord[2], coord[3])
+                rectangle(*coord)
 
     def launch_level(self):
 
         self.init_window()
         self.init_level()
-        running = True
-
-        while running:
-
-            event = donne_ev()
-            type_event = type_ev(event)
-
-            if type_event == "Quitte":
-                running = False
-
-            mise_a_jour()
-
-        ferme_fenetre()
-
-
-class Level2:
-    def __init__(self) -> None:
-        self.width = 1000
-        self.height = 800
-
-        """self.file_level = Configuration("all_level/level2")
-
-        self.bloc = self.file_level.dico_bloc"""
-
-    def init_window(self):
-        cree_fenetre(self.width, self.height)
-
-        x, y = 500, 400
-
-        image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='level2')
-
-    def launch_level(self):
-        self.init_window()
 
         running = True
 
@@ -213,40 +172,17 @@ class Level2:
         ferme_fenetre()
 
 
-class Level3:
+class Level1(Level):
+    def __init__(self, blocs, img) -> None:
+        super().__init__(blocs, img)
 
-    def __init__(self) -> None:
-        self.width = 1000
-        self.height = 800
 
-        """self.file_level = Configuration("all_level/level3")
+blocs_level_1 = {
+    "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
+    "platforms": [(0, 440, 125, 490), (195, 370, 305, 410), (400, 345, 550, 390), (650, 345, 810, 390),
+                  (230, 525, 345, 575), (450, 650, 575, 750)]}
 
-        self.bloc = self.file_level.dico_bloc"""
-
-    def init_window(self):
-        cree_fenetre(self.width, self.height)
-
-        x, y = 500, 400
-
-        image(x, y, 'assets/carte.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='level3')
-
-    def launch_level(self):
-        self.init_window()
-
-        running = True
-
-        while running:
-
-            event = donne_ev()
-            type_event = type_ev(event)
-
-            if type_event == "Quitte":
-                running = False
-
-            mise_a_jour()
-
-        ferme_fenetre()
-
+image_level_1 = "img_level_1.png"
 
 test = HomeScreen()
 test.launch()
@@ -254,10 +190,7 @@ test.launch()
 carte = Map()
 niveau = carte.choose_level()
 
-levels = [Level1(), Level2(), Level3()]
-
-print(niveau)
+levels = [Level1(blocs_level_1, image_level_1)]
 
 if carte.launch_level:
     levels[niveau].launch_level()
-
