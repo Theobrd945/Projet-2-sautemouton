@@ -146,11 +146,8 @@ class Level:
 
     def init_level(self):
 
-        for key, value in self.blocs.items():
-
-            for coord in value:
-
-                rectangle(*coord)
+        for coord in self.blocs["platforms"]:
+            rectangle(*coord, couleur = "red")
 
     def launch_level(self):
 
@@ -179,8 +176,9 @@ class Level1(Level):
 
 blocs_level_1 = {
     "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
-    "platforms": [(0, 440, 125, 490), (195, 370, 305, 410), (400, 345, 550, 390), (650, 345, 810, 390),
-                  (230, 525, 345, 575), (450, 650, 575, 750)]}
+    "platforms": [(0, 715, 1000, 800), (0, 600, 125, 715), (0, 485, 225, 600), (875, 600, 1000, 715),
+                  (825, 485, 1000, 600), (440, 485, 590, 595)],
+    "spawn_player" : []}
 
 image_level_1 = "img_level_1.png"
 
