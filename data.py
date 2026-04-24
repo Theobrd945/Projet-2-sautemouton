@@ -24,6 +24,12 @@ class Personnage:
         x, y = self.__position
         self.__position = (x + dx, y + dy)
 
+    def set_largeur(self,largeur):
+        self.__largeur=largeur
+
+    def set_hauteur(self,hauteur):
+        self.__hauteur=hauteur
+
 
 
 
@@ -48,6 +54,8 @@ class Bloc:
         return self.__hauteur
 
 
+
+
 class Configuration:
 
     def __init__(self,nom_niveaux):
@@ -58,7 +66,7 @@ class Configuration:
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
 
     def get_objectif(self) -> Bloc:
-        return self.dico_bloc["objectif"]
+        return self.dico_bloc["objectif"][0]
 
 
     def save(self,nom) -> None:
@@ -98,7 +106,7 @@ class Configuration:
 
                 if cle == "position":
                     x, y = map(int, valeur.split(","))
-                    self.personnage = Personnage((x, y))
+                    self.personnage = Personnage((x,y),0,0)
 
                 elif cle == "largeur":
                     self.personnage.set_largeur(int(valeur))
