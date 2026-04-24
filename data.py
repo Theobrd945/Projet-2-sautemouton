@@ -89,6 +89,10 @@ class Configuration:
         mode = None
         self.dico_bloc = {}
         self.personnage = None
+        x = 0
+        y = 0
+        largeur1 = 0
+        hauteur1 = 0
 
         for ligne in lignes:
             ligne = ligne.strip()
@@ -106,27 +110,28 @@ class Configuration:
 
                 if cle == "position":
                     x, y = map(int, valeur.split(","))
-                    self.personnage = Personnage((x,y),0,0)
 
                 elif cle == "largeur":
-                    self.personnage.set_largeur(int(valeur))
+                    largeur1=int(valeur)
 
                 elif cle == "hauteur":
-                    self.personnage.set_hauteur(int(valeur))
+                    hauteur1=int(valeur)
+
 
             elif mode == "blocs":
                 typebloc, pos, largeur, hauteur = ligne.split(";")
 
-                x, y = map(int, pos.split(","))
+                x1, y1 = map(int, pos.split(","))
                 largeur = int(largeur)
                 hauteur = int(hauteur)
 
-                bloc = Bloc((x, y), typebloc, largeur, hauteur)
+                bloc = Bloc((x1, y1), typebloc, largeur, hauteur)
 
                 if typebloc not in self.dico_bloc:
                     self.dico_bloc[typebloc] = []
 
                 self.dico_bloc[typebloc].append(bloc)
+        self.personnage = Personnage((x, y), largeur1, hauteur1)
 
 
 
@@ -145,12 +150,9 @@ def collision(personnage, dico_bloc):
 
     return None
 
-def victoire(personnage, objectif, dico_bloc) -> bool:
-    return objectif==collision(personnage,dico_bloc)
-
-
-
-
+def victoire(personnage, dico_bloc) -> bool:
+    bloc = collision(personnage, dico_bloc)
+    return bloc is not None and bloc.get_typebloc() == "objectif"
 
 
     
@@ -160,5 +162,4 @@ def victoire(personnage, objectif, dico_bloc) -> bool:
 
 
     
-
 
