@@ -24,6 +24,12 @@ class Personnage:
         x, y = self.__position
         self.__position = (x + dx, y + dy)
 
+    def set_largeur(self,largeur):
+        self.__largeur=largeur
+
+    def set_hauteur(self,hauteur):
+        self.__hauteur=hauteur
+
 
 
 
@@ -48,6 +54,8 @@ class Bloc:
         return self.__hauteur
 
 
+
+
 class Configuration:
 
     def __init__(self,nom_niveaux):
@@ -58,7 +66,7 @@ class Configuration:
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
 
     def get_objectif(self) -> Bloc:
-        return self.dico_bloc["objectif"]
+        return self.dico_bloc["objectif"][0]
 
 
     def save(self,nom) -> None:
@@ -81,6 +89,10 @@ class Configuration:
         mode = None
         self.dico_bloc = {}
         self.personnage = None
+        x = 0
+        y = 0
+        largeur1 = 0
+        hauteur1 = 0
 
         for ligne in lignes:
             ligne = ligne.strip()
@@ -98,27 +110,28 @@ class Configuration:
 
                 if cle == "position":
                     x, y = map(int, valeur.split(","))
-                    self.personnage = Personnage((x, y))
 
                 elif cle == "largeur":
-                    self.personnage.set_largeur(int(valeur))
+                    largeur1=int(valeur)
 
                 elif cle == "hauteur":
-                    self.personnage.set_hauteur(int(valeur))
+                    hauteur1=int(valeur)
+
 
             elif mode == "blocs":
                 typebloc, pos, largeur, hauteur = ligne.split(";")
 
-                x, y = map(int, pos.split(","))
+                x1, y1 = map(int, pos.split(","))
                 largeur = int(largeur)
                 hauteur = int(hauteur)
 
-                bloc = Bloc((x, y), typebloc, largeur, hauteur)
+                bloc = Bloc((x1, y1), typebloc, largeur, hauteur)
 
                 if typebloc not in self.dico_bloc:
                     self.dico_bloc[typebloc] = []
 
                 self.dico_bloc[typebloc].append(bloc)
+        self.personnage = Personnage((x, y), largeur1, hauteur1)
 
 
 
@@ -137,12 +150,9 @@ def collision(personnage, dico_bloc):
 
     return None
 
-def victoire(personnage, objectif, dico_bloc) -> bool:
-    return objectif==collision(personnage,dico_bloc)
-
-
-
-
+def victoire(personnage, dico_bloc) -> bool:
+    bloc = collision(personnage, dico_bloc)
+    return bloc is not None and bloc.get_typebloc() == "objectif"
 
 
     
@@ -152,5 +162,4 @@ def victoire(personnage, objectif, dico_bloc) -> bool:
 
 
     
-
 
