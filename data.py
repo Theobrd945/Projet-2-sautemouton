@@ -135,25 +135,6 @@ class Configuration:
 
 
 
-def collision(personnage, dico_bloc):
-    px, py = personnage.get_position()
-    pl = personnage.get_largeur()
-    ph = personnage.get_hauteur()
-
-    for liste_blocs in dico_bloc.values():
-        for bloc in liste_blocs:
-            bx, by = bloc.get_position()
-            bl = bloc.get_largeur()
-            bh = bloc.get_hauteur()
-            if (px < bx + bl) and (px + pl > bx) and (py < by + bh) and (py + ph > by):
-                return bloc
-
-    return None
-
-def victoire(personnage, dico_bloc) -> bool:
-    bloc = collision(personnage, dico_bloc)
-    return bloc is not None and bloc.get_typebloc() == "objectif"
-
 
     
 

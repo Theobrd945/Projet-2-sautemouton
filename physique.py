@@ -1,6 +1,6 @@
 from typing import Callable
 
-from data import Personnage, Configuration
+from data import Personnage, Configuration, Bloc
 from math import sqrt, atan2
 
 class Couple:
@@ -39,7 +39,39 @@ def couple_split(T: Couple) -> tuple:
     print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire couple_split")
     return T.x, T.y
 
-def snap_coords_on_collision(personnage, dico_bloc) -> None: ...
+
+def check_collision(personnage, dico_bloc) -> Bloc:
+    # par tHéo
+    px, py = personnage.get_position()
+    pl = personnage.get_largeur()
+    ph = personnage.get_hauteur()
+
+    for liste_blocs in dico_bloc.values():
+        for bloc in liste_blocs:
+            bx, by = bloc.get_position()
+            bl = bloc.get_largeur()
+            bh = bloc.get_hauteur()
+            if (px < bx + bl) and (px + pl > bx) and (py < by + bh) and (py + ph > by):
+                return bloc
+
+    return None
+
+# a finir
+def snap_coords_on_collision(personnage: Personnage, blocs) -> None:
+    collision = check_collision(personnage, blocs)
+    if not collision: return
+
+    px, py = personnage.get_position()
+    pl, ph = personnage.get_largeur(), personnage.get_hauteur()
+    
+    bx, by = collision.get_position()
+    bl, bh = collision.get_largeur(), collision.get_hauteur()
+
+
+
+    
+
+
 
 class Vecteur:
     """ couple de paire """
@@ -74,7 +106,7 @@ class MoteurPhysique:
     def __init__(self, config: Configuration, vmax: float,
                 gravite: float = 9.8, resistance: Callable[[Couple], Couple] = identite):
         self.config = config
-        self.personnage = self.config.personnage
+        self.personnage: Personnage = self.config.personnage
         self.vmax = vmax
         self.vmin = 0.005
         self.gravite = gravite
@@ -83,18 +115,28 @@ class MoteurPhysique:
 
 
     def onclick(self, click: Couple) -> None:
+        print("click!")
         curr_pos = tuple_merge(self.personnage.get_position())
         self.vitesse += (click - curr_pos)
 
     def update(self):
-        self.vitesse -= self.resistance(self.vitesse)
+        print("update!")
+        # refaire
+        #self.vitesse += self.resistance(self.vitesse)
         self.vitesse += Couple(0.0, self.gravite)
+
+        # a finir
+        if check_collision(self.personnage, self.config.dico_bloc):
+            self.vitesse.y = 0.0
 
         if abs(self.vitesse.x) < self.vmin:      self.vitesse.x = 0.0
         if abs(self.vitesse.y) < self.vmin:      self.vitesse.y = 0.0
 
+        # a finir: si x < 0: ..., x > 0: _ 
         self.vitesse.x = min(self.vmax, self.vitesse.x)
         self.vitesse.y = min(self.vmax, self.vitesse.y)
+
+        print(f"{self.vitesse.x = } {self.vitesse.y = }")
 
         curr_pos = tuple_merge(self.personnage.get_position())
         curr_pos += self.vitesse
@@ -114,7 +156,7 @@ def ssqrt(x: float) -> float:
     return sqrt(x)
 racine_signe = (lambda couple: Couple(ssqrt(couple.x), ssqrt(couple.y)))
 soixante_dix_pourcent = lambda couple : Couple(couple.x * 0.7, couple.y * 0.7)
-inverse = lambda couple: Couple(1 / couple.x, 1/ couple.y)
+full_inverse = lambda couple: Couple(1 / couple.x, 1/ couple.y)
 drag = lambda couple : Couple(0.5 * 1.293 * couple.x * (20 * 20) * 1.05, 0.5 * 1.293 * couple.y * (20 * 20) * 1.05)
 RESISTANCE = 100
 linaire = lambda couple : Couple(couple.x - RESISTANCE, couple.y - RESISTANCE)

@@ -1,15 +1,17 @@
-from physique import MoteurPhysique, couple_split, tuple_merge
+from physique import MoteurPhysique, couple_split, tuple_merge, Couple
 from screens import HomeScreen, Map, Level1
 from data import Configuration
 import pprint
 from fltk import *
+
+
 
 def debut():
 
     config = Configuration("all_levels/level1.txt")
     image_level_1 = "img_level_1.png"
 
-    mp = MoteurPhysique(config, vmax=50)
+    mp = MoteurPhysique(config, vmax=4)
 
     test = HomeScreen()
     test.launch()
@@ -38,6 +40,7 @@ def debut():
 
         mp.update()
         levels[niveau].draw_player(mp.personnage.get_position())
+        print(f"position: {mp.personnage.get_position()}")
 
         mise_a_jour()
 
