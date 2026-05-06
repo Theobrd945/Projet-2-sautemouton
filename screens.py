@@ -144,47 +144,15 @@ class Level:
 
         image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
-
-
     def launch_level(self):
-
         self.init_window()
 
-        running = True
-
-        while running:
-
-            event = donne_ev()
-            type_event = type_ev(event)
-
-            if type_event == "Quitte":
-                running = False
-
-            mise_a_jour()
-
-        ferme_fenetre()
+    def draw_player(self, coords):
+        taille_joueur = 50
+        rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red')
 
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)
 
-
-blocs_level_1 = {
-    "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
-    "platforms": [(0, 715, 1000, 800), (0, 600, 125, 715), (0, 485, 225, 600), (875, 600, 1000, 715),
-                  (825, 485, 1000, 600), (440, 485, 590, 595)],
-    "spawn_player" : [(850, 435, 900, 485)]}
-
-image_level_1 = "img_level_1.png"
-
-test = HomeScreen()
-test.launch()
-
-carte = Map()
-niveau = carte.choose_level()
-
-levels = [Level1(Configuration("all_levels/level1.txt"), image_level_1)]
-
-if carte.launch_level:
-    levels[niveau].launch_level()
