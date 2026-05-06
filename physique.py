@@ -39,6 +39,7 @@ def couple_split(T: Couple) -> tuple:
     print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire couple_split")
     return T.x, T.y
 
+def snap_coords_on_collision(personnage, dico_bloc) -> None: ...
 
 class Vecteur:
     """ couple de paire """
@@ -70,12 +71,10 @@ identite = lambda x: x
 
 # TODO: niveaux et collision
 class MoteurPhysique:
-    def __init__(self, personnage, vmax: float,
-                 gravite: float = 9.8, resistance: Callable[[Couple], Couple] = identite):
-        """
-        ATTENTION : config_niveau doit avoir été load préalablement
-        """
-        self.personnage = personnage
+    def __init__(self, config: Configuration, vmax: float,
+                gravite: float = 9.8, resistance: Callable[[Couple], Couple] = identite):
+        self.config = config
+        self.personnage = self.config.personnage
         self.vmax = vmax
         self.vmin = 0.005
         self.gravite = gravite
@@ -89,7 +88,7 @@ class MoteurPhysique:
 
     def update(self):
         self.vitesse -= self.resistance(self.vitesse)
-        self.vitesse -= Couple(0.0, self.gravite)
+        self.vitesse += Couple(0.0, self.gravite)
 
         if abs(self.vitesse.x) < self.vmin:      self.vitesse.x = 0.0
         if abs(self.vitesse.y) < self.vmin:      self.vitesse.y = 0.0
@@ -100,6 +99,11 @@ class MoteurPhysique:
         curr_pos = tuple_merge(self.personnage.get_position())
         curr_pos += self.vitesse
         self.personnage.set_position(couple_split(curr_pos))
+
+
+
+
+
 
 
 
@@ -114,76 +118,3 @@ inverse = lambda couple: Couple(1 / couple.x, 1/ couple.y)
 drag = lambda couple : Couple(0.5 * 1.293 * couple.x * (20 * 20) * 1.05, 0.5 * 1.293 * couple.y * (20 * 20) * 1.05)
 RESISTANCE = 100
 linaire = lambda couple : Couple(couple.x - RESISTANCE, couple.y - RESISTANCE)
-
-# tests
-if __name__ == '__main__':
-    from matplotlib.pyplot import plot, show, title, scatter, axis
-
-
-    def test_gravite(counter: int, strategie, click):
-        perso = Personnage((0, 0), 100, 100)
-        mp = MoteurPhysique(perso, 20, 3, strategie)  # 6.5
-        mp.onclick(click)
-
-        positions = list()
-        positions.append((0, 0))
-        vitesses = []
-
-        while counter > 0 and perso.get_position()[1] > -1:
-            counter -= 1
-            # print()
-            # print(f"{mp.vitesse.__str__() = }")
-            # print(f"{p.get_position() = }")
-            mp.update()
-            counter -= 1
-            positions.append(perso.get_position())
-            vitesses.append(couple_split(mp.vitesse))
-
-        return positions, vitesses
-
-
-    def affiche_resultats(p, v, nom, click):
-        p0, p1 = [a[0] for a in p], [a[1] for a in p]
-        v0, v1 = [a[0] for a in v], [a[1] for a in v]
-        print(f"{p = }")
-        scatter(p0, p1)
-        cx, cy = couple_split(click)
-        scatter(cx, cy)
-        title(f"{nom} (positions scattered)")
-        axis('equal')
-        show()
-
-        """
-        scatter(v0, v1)
-        title(f"{nom} (vitesses scattered)")
-        axis('equal')
-        show()
-
-        plot(p)
-        plot(v)
-        title(f"{nom} (traced)")
-        axis('equal')
-        show()
-        """
-
-
-    taille = 40
-    coords_click = Couple(100, 30)
-
-    p, v = test_gravite(taille, linaire, coords_click)
-    affiche_resultats(p, v, "linéaire", coords_click)
-
-    p, v = test_gravite(taille, demie_vie, coords_click)
-    affiche_resultats(p, v, "demie_vie", coords_click)
-
-    p, v = test_gravite(taille, racine_signe, coords_click)
-    affiche_resultats(p, v, "racine_signe", coords_click)
-
-    p, v = test_gravite(taille, soixante_dix_pourcent, coords_click)
-    affiche_resultats(p, v, "soixante_dix_pourcent", coords_click)
-
-    p, v = test_gravite(taille, inverse, coords_click)
-    affiche_resultats(p, v, "inverse", coords_click)
-
-    p, v = test_gravite(taille, drag, coords_click)
-    affiche_resultats(p, v, "true drag", coords_click)

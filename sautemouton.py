@@ -1,4 +1,4 @@
-from physique import MoteurPhysique, couple_split
+from physique import MoteurPhysique, couple_split, tuple_merge
 from screens import HomeScreen, Map, Level1
 from data import Configuration
 import pprint
@@ -9,7 +9,7 @@ def debut():
     config = Configuration("all_levels/level1.txt")
     image_level_1 = "img_level_1.png"
 
-    mp = MoteurPhysique(config.personnage, 50)
+    mp = MoteurPhysique(config, vmax=50)
 
     test = HomeScreen()
     test.launch()
@@ -26,15 +26,18 @@ def debut():
     running = True
 
     while running:
-
         event = donne_ev()
         type_event = type_ev(event)
 
         if type_event == "Quitte":
             running = False
 
-        levels[niveau].draw_player(mp.personnage.get_position())
+        if type_event == "ClicGauche":
+            click_coords = abscisse(event), ordonnee(event)
+            mp.onclick(tuple_merge(click_coords))
 
+        mp.update()
+        levels[niveau].draw_player(mp.personnage.get_position())
 
         mise_a_jour()
 

@@ -149,7 +149,8 @@ class Level:
 
     def draw_player(self, coords):
         taille_joueur = 50
-        rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red')
+        efface("player")
+        rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
 
 
 class Level1(Level):
