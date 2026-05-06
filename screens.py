@@ -144,15 +144,11 @@ class Level:
 
         image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
-    def init_level(self):
 
-        for coord in self.blocs["spawn_player"]:
-            rectangle(*coord, couleur = "red")
 
     def launch_level(self):
 
         self.init_window()
-        self.init_level()
 
         running = True
 
@@ -188,7 +184,7 @@ test.launch()
 carte = Map()
 niveau = carte.choose_level()
 
-levels = [Level1(blocs_level_1, image_level_1)]
+levels = [Level1(Configuration("all_levels/level1.txt"), image_level_1)]
 
 if carte.launch_level:
     levels[niveau].launch_level()
