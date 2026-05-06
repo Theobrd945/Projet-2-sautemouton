@@ -9,17 +9,18 @@ from fltk import *
 def debut():
 
     config = Configuration("all_levels/level1.txt")
-    image_level_1 = "img_level_1.png"
+
+    images = ["img_level_1.png"]
 
     mp = MoteurPhysique(config, vmax=4)
 
-    test = HomeScreen()
-    test.launch()
+    home_screen = HomeScreen()
+    home_screen.launch()
 
     carte = Map()
     niveau = carte.choose_level()
 
-    levels = [Level1(config.dico_bloc, image_level_1)]
+    levels = [Level1(config.dico_bloc, images[0])]
 
     if carte.launch_level:
         levels[niveau].launch_level()
