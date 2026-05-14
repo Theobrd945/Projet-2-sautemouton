@@ -20,7 +20,7 @@ class HomeScreen:
 
     def init_window(self):
 
-        cree_fenetre(self.width, self.height)
+        cree_fenetre(self.width, self.height, frequence=60)
 
         x, y = 500, 400
         image(x, y, fichier='assets/img3.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='im')
@@ -156,4 +156,3 @@ class Level:
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)
-

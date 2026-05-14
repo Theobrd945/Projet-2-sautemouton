@@ -1,10 +1,11 @@
-from physique import MoteurPhysique, couple_split, tuple_merge, Couple
+from physique import MoteurPhysique, couple_split, tuple_merge, Couple, strategies_resistance, printwarn
 from screens import HomeScreen, Map, Level1
 from data import Configuration
 import pprint
 from fltk import *
 
-
+printwarn("test1")
+printwarn("test2", sev="ERROR")
 
 def debut():
 
@@ -12,7 +13,7 @@ def debut():
 
     images = ["img_level_1.png"]
 
-    mp = MoteurPhysique(config, vmax=4)
+    mp = MoteurPhysique(config, vmax=Couple(5, 10), gravite=1, resistance=strategies_resistance["quatre_vingt"])
 
     home_screen = HomeScreen()
     home_screen.launch()
@@ -42,12 +43,14 @@ def debut():
         mp.update()
         levels[niveau].draw_player(mp.personnage.get_position())
         print(f"position: {mp.personnage.get_position()}")
+        print(f"vitesse: {mp.vitesse}")
+        print(f"on block: {mp.onblock}")
 
         mise_a_jour()
 
     ferme_fenetre()
 
-    
+
 
 
 debut()
