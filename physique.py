@@ -113,12 +113,15 @@ class MoteurPhysique:
         # on sait déjà qu'il y a collision, on cherche juste de quel coté
         # vérifie que la vitesse vas dans le bon sens -> qu'il y une collision dans cet axe
 
-        collision_droite = (position_perso.x + taille_perso.x) - position_bloc.x
-        collision_gauche = (position_bloc.x + taille_bloc.x) - position_perso.x
+        collision_gauche = (position_perso.x + taille_perso.x) - position_bloc.x
+        collision_droite = (position_bloc.x + taille_bloc.x) - position_perso.x
         collision_haut = (position_perso.y + taille_perso.y) - position_bloc.y
         collision_bas = (position_bloc.y + taille_bloc.y) - position_perso.y
 
         collision_min = min(collision_droite, collision_gauche, collision_haut, collision_bas)
+        print(f"{collision_droite = }, {collision_gauche = }, {collision_haut = }, {collision_bas = }")
+        print(f"{collision_min = }")
+
 
         if collision_min == collision_droite and vitesse.x < 0:
             return DROITE
@@ -176,8 +179,19 @@ class MoteurPhysique:
         position_perso = tuple_merge(self.personnage.get_position())
         taille_perso = tuple_merge((self.personnage.get_largeur(), self.personnage.get_hauteur()))
 
+        if capped_speed.x == 0 and capped_speed.y == 0:
+            self.personnage.set_position(couple_split(position_perso + capped_speed))
+            return False
+
         bloc, direction = self.check_collision(position_perso, taille_perso, self.config.dico_bloc, capped_speed)
         if not bloc:
+            # prédicteur
+            next_speed = self.resistance(capped_speed.copy())
+            next_speed.y += self.gravite
+            next_frame_collision, _ = self.check_collision(position_perso + capped_speed, taille_perso, self.config.dico_bloc, next_speed)
+            if not next_frame_collision:
+                self.onblock = False
+
             self.personnage.set_position(couple_split(position_perso + capped_speed))
             return False
 
@@ -189,25 +203,26 @@ class MoteurPhysique:
 
         position_bloc = tuple_merge(bloc.get_position())
         taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
-
+        print(f"{taille_bloc.__str__() = } ")
+        print(f"{position_bloc.__str__() = }")
         fltk.rectangle(position_bloc.x, position_bloc.y, position_bloc.x + taille_bloc.x, position_bloc.y + taille_bloc.y, "red")
 
         if direction == GAUCHE:
             self.vitesse.x = capped_speed.x = 0.0
-            position_perso.x = position_bloc.x - taille_perso.x - EPSILON
+            position_perso.x = position_bloc.x - taille_perso.x
 
         if direction == DROITE:
             self.vitesse.x = capped_speed.x = 0.0
-            position_perso.x = position_bloc.x + taille_bloc.x + EPSILON
+            position_perso.x = position_bloc.x + taille_bloc.x
 
         if direction == HAUT:
             self.onblock = True
             self.vitesse.y = capped_speed.y = 0.0
-            position_perso.y = position_bloc.y - taille_perso.y - EPSILON
+            position_perso.y = position_bloc.y - taille_perso.y
 
         if direction == BAS:
             self.vitesse.y = capped_speed.y = 0.0
-            position_perso.y = position_bloc.y + taille_bloc.y + EPSILON
+            position_perso.y = position_bloc.y + taille_bloc.y
 
         if direction == NUL_DIREC:
             print("nul direc!")
