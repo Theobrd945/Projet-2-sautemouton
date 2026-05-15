@@ -1,10 +1,22 @@
-from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance, printwarn
+from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
 from screens import HomeScreen, Map, Level1
-from data import Configuration
-from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre
+from data import Configuration, Queue
+from fltk import donne_ev, efface, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, cercle
 
-printwarn("test1")
-printwarn("test2", sev="ERROR")
+TAILLE_TRAINE = 20
+def affiche_queue(positions: Queue, current_ids: Queue, unique_id_count: int, taille_perso: Couple) -> int:
+    unique_id_count += 1
+    current_ids.push(unique_id_count)
+    if len(positions) > TAILLE_TRAINE:
+        positions.pop()
+        efface(f"uid:{current_ids.pop()}")
+        print(len(positions))
+
+    for position in positions:
+        cercle(position[0] + (taille_perso.x // 2), position[1] + (taille_perso.y // 2), 10, 'white', tag=f'uid:{unique_id_count}')
+
+    return unique_id_count
+
 
 def debut():
 
@@ -12,7 +24,8 @@ def debut():
 
     images = ["img_level_1.png"]
 
-    mp = MoteurPhysique(config, Couple(10, 19), gravite=2, resistance=strategies_resistance["quatre_vingt"])
+    mp = MoteurPhysique(config, Couple(10, 19), gravite=3, resistance=strategies_resistance["quatre_vingt"])
+    taille_perso = Couple(mp.personnage.get_largeur(), mp.personnage.get_hauteur())
 
     home_screen = HomeScreen()
     home_screen.launch()
@@ -22,9 +35,12 @@ def debut():
 
     levels = [Level1(config.dico_bloc, images[0])]
 
+    queue_positions = Queue()
+    ids = Queue()
+    unique_id_count = 0
+
     if carte.launch_level:
         levels[niveau].launch_level()
-
 
     running = True
     while running:
@@ -39,10 +55,18 @@ def debut():
             mp.onclick(tuple_merge(click_coords))
 
         objectif_atteint = mp.update()
+
         if objectif_atteint:
             print("gagné!")
             running = False
-        levels[niveau].draw_player(mp.personnage.get_position())
+
+        position_perso = mp.personnage.get_position()
+
+        queue_positions.push(position_perso)
+        unique_id_count = affiche_queue(queue_positions, ids, unique_id_count, taille_perso)
+
+        levels[niveau].draw_player(position_perso)
+
         print(f"position: {mp.personnage.get_position()}")
         print(f"vitesse: {mp.vitesse}")
         print(f"on block: {mp.onblock}")
