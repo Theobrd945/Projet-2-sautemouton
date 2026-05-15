@@ -1,7 +1,7 @@
 [PERSONNAGE]
-position=850,455
-largeur=25
-hauteur=25
+position=850,435
+largeur=50
+hauteur=50
 
 [BLOCS]
 mur;0,0;1;800
@@ -16,4 +16,4 @@ platform;875,600;125;115
 platform;825,485;175;115
 platform;440,485;150;110
 
-objectif;120,435;75;75
+objectif;120,435;20;20

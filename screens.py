@@ -148,11 +148,19 @@ class Level:
         self.init_window()
 
     def draw_player(self, coords):
-        taille_joueur = 50
+        taille_joueur = 25
         efface("player")
         rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
 
 
 class Level1(Level):
+    def __init__(self, blocs, img) -> None:
+        super().__init__(blocs, img)
+
+class Level2(Level):
+    def __init__(self, blocs, img) -> None:
+        super().__init__(blocs, img)
+
+class Level3(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)

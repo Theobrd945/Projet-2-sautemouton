@@ -32,7 +32,7 @@ class Couple:
 
 
 def printwarn(s, sev = "warn"):
-    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")
+    return print(f"\033[{ '93mWARNING' if sev == 'warn' else f'31m{sev}' }\033[0m: {s}")
 
 # noinspection PyPep8Naming
 def tuple_merge(T: tuple) -> Couple:
