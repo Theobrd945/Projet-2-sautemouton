@@ -77,7 +77,7 @@ class Map:
 
         image(x, y, 'assets/carte2.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='carte')
 
-    def isClick_on_button(self, event_location, btn_top, btn_bot) -> bool:
+    def is_click_on_button(self, event_location, btn_top, btn_bot) -> bool:
 
         return (self.btn_niveau_left <= abscisse(event_location) <= self.btn_niveau_right
                 and btn_top <= ordonnee(event_location) <= btn_bot)
@@ -97,19 +97,19 @@ class Map:
 
             if type_event == "ClicGauche":
 
-                if self.isClick_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
+                if self.is_click_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
 
                     level_is = 2
 
                     running = False
 
-                elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
+                elif self.is_click_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
 
                     level_is = 1
 
                     running = False
 
-                elif self.isClick_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
+                elif self.is_click_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
 
                     level_is = 0
 
@@ -136,6 +136,9 @@ class Level:
         self.blocs = blocs
         self.img = img
 
+        self.spawn_x = 900
+        self.spawn_y = 300
+
     def init_window(self):
 
         cree_fenetre(self.width, self.height)
@@ -146,8 +149,7 @@ class Level:
 
     def init_level(self):
 
-        for coord in self.blocs["spawn_player"]:
-            rectangle(*coord, couleur = "red")
+        image(self.spawn_x, self.spawn_y, 'assets/mouton_1.png', largeur=100, hauteur=100, ancrage='center')
 
     def launch_level(self):
 
@@ -186,9 +188,9 @@ test = HomeScreen()
 test.launch()
 
 carte = Map()
-niveau = carte.choose_level()
+level_selected = carte.choose_level()
 
 levels = [Level1(blocs_level_1, image_level_1)]
 
 if carte.launch_level:
-    levels[niveau].launch_level()
+    levels[level_selected].launch_level()
