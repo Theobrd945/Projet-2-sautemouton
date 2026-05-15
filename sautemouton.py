@@ -11,7 +11,7 @@ def debut():
 
     configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt")]
 
-    images = ["img_level_1.png", "img_level_2.png", "img_level_3.png"]
+    images = ["img_level_1.png", "img_level_2_2.png", "img_level_3.png"]
 
     home_screen = HomeScreen()
     home_screen.launch()
@@ -27,7 +27,6 @@ def debut():
     if carte.launch_level:
 
         level = levels[name_level]
-        print(level)
         level.launch_level()
 
     running = True
