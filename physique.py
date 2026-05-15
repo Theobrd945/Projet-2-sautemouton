@@ -27,6 +27,9 @@ class Couple:
     def __sub__(self, other: 'Couple') -> 'Couple':
         return Couple(self.x - other.x, self.y - other.y)
 
+    def __mul__(self, other: float) -> 'Couple':
+        return self.apply(lambda v: v * other)
+
     def __str__(self) -> str:
         return f"({self.x}, {self.y})"
 
@@ -103,8 +106,8 @@ class MoteurPhysique:
 
         self.onblock = False
         curr_pos = tuple_merge(self.personnage.get_position())
-        self.vitesse += (click - curr_pos)
-        print("click")
+        self.vitesse += click - (curr_pos + Couple(self.personnage.get_largeur() // 2, self.personnage.get_hauteur() // 2))
+        printwarn("click")
         # print(f"{((click - curr_pos).x, (click - curr_pos).y) =}")
 
 
@@ -119,9 +122,6 @@ class MoteurPhysique:
         collision_bas = (position_bloc.y + taille_bloc.y) - position_perso.y
 
         collision_min = min(collision_droite, collision_gauche, collision_haut, collision_bas)
-        print(f"{collision_droite = }, {collision_gauche = }, {collision_haut = }, {collision_bas = }")
-        print(f"{collision_min = }")
-
 
         if collision_min == collision_droite and vitesse.x < 0:
             return DROITE
@@ -195,16 +195,14 @@ class MoteurPhysique:
             self.personnage.set_position(couple_split(position_perso + capped_speed))
             return False
 
-        print(f"capped_speed: {capped_speed}")
-        print("collision!")
+        # print(f"capped_speed: {capped_speed}")
+        # print("collision!")
 
         if isinstance(bloc, BlocObjectif):
             return True
 
         position_bloc = tuple_merge(bloc.get_position())
         taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
-        print(f"{taille_bloc.__str__() = } ")
-        print(f"{position_bloc.__str__() = }")
         fltk.rectangle(position_bloc.x, position_bloc.y, position_bloc.x + taille_bloc.x, position_bloc.y + taille_bloc.y, "red")
 
         if direction == GAUCHE:
@@ -225,7 +223,29 @@ class MoteurPhysique:
             position_perso.y = position_bloc.y + taille_bloc.y
 
         if direction == NUL_DIREC:
-            print("nul direc!")
+            printwarn("nul direc!", "ERROR")
 
         self.personnage.set_position(couple_split(position_perso + capped_speed))
         return False
+
+
+    def predict(self, n: int, click: Couple, dy_trim = False) -> list[Couple]:
+        """
+        renvoie la liste des n prochaines coodonées après un clique
+        dy_trim stop les prédictions à partir du moment ou le personnage touche le sol
+        """
+        coord_save = self.personnage.get_position()
+        speed_save = self.vitesse
+        onblock_save = self.onblock
+        self.onclick(click)
+
+        predictions = []
+        for _ in range(n):
+            self.update()
+            if not (dy_trim and self.vitesse.y == 0):
+                predictions.append(tuple_merge(self.personnage.get_position()))
+
+        self.personnage.set_position(coord_save)
+        self.vitesse = speed_save
+        self.onblock = onblock_save
+        return predictions
