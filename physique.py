@@ -1,7 +1,7 @@
 from typing import Callable
-
-from data import Personnage, Configuration
-from math import sqrt, atan2
+from data import Personnage, Configuration, Bloc, BlocObjectif
+from math import sqrt
+import fltk
 
 class Couple:
     def __init__(self, x: float, y: float):
@@ -9,6 +9,17 @@ class Couple:
         self.y = y
 
     """ couple (couple, y) de réels """
+    # distribue l'application sur les membres du couple
+    def apply(self, application: Callable[..., float]) -> 'Couple':
+        self.x = application(self.x)
+        self.y = application(self.y)
+        return self
+
+    def copy(self) -> 'Couple':
+        return Couple(self.x, self.y)
+
+    def norme(self) -> float:
+        return sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other: 'Couple') -> 'Couple':
         return Couple(self.x + other.x, self.y + other.y)
@@ -20,13 +31,16 @@ class Couple:
         return f"({self.x}, {self.y})"
 
 
+def printwarn(s, sev = "warn"):
+    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")
+
 # noinspection PyPep8Naming
 def tuple_merge(T: tuple) -> Couple:
     """
     affiche un avertissement à chaque utilisation.
     Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
     """
-    print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire tuple_merge")
+    # printwarn("utilisation d'une fonction temporaire tuple_merge")
     return Couple(T[0], T[1])
 
 
@@ -36,154 +50,182 @@ def couple_split(T: Couple) -> tuple:
         affiche un avertissement à chaque utilisation.
         Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
         """
-    print(f"\033[93mWARNING\033[0m: utilisation d'une fonction temporaire couple_split")
+    # printwarn("utilisation d'une fonction temporaire couple_split")
     return T.x, T.y
 
 
-class Vecteur:
-    """ couple de paire """
+def sign(x: float) -> int: return -1 if x < 0 else 1
+def ssqrt(x: float) -> float: return -sqrt(abs(x)) if x < 0 else sqrt(x)
 
-    def __init__(self, origin: Couple, destination: Couple):
-        self.origin = origin
-        self.destination = destination
 
-    def __add__(self, other: 'Vecteur') -> 'Vecteur':
-        return Vecteur(self.origin + other.origin, self.destination + other.destination)
-
-    def __str__(self) -> str:
-        return f"{self.origin} -> {self.destination} ({self.norme()}u, {self.angle()}rad)"
-
-    def angle(self) -> float:
-        dx, dy = abs(self.origin.x - self.destination.x), abs(self.origin.y - self.destination.y)
-        return atan2(dx, dy)
-
-    def norme(self) -> float:
-        dx, dy = abs(self.origin.x - self.destination.x), abs(self.origin.y - self.destination.y)
-        return sqrt(dx ** 2 + dy ** 2)
-
+class Direction: ...
+HAUT, BAS, DROITE, GAUCHE, NUL_DIREC = (Direction() for _ in range(5))
 ORIGIN = Couple(0, 0)
-NULVEC = Vecteur(ORIGIN, ORIGIN)
+RESISTANCE = 1
+EPSILON = 1e-4
 
-# stratégie par défaut pour le calcul des frottements de l'air
-identite = lambda x: x
+# stratégies pour le calcul des frottements de l'air
+strategies_resistance = {
+    "identite" : lambda x:  x,
+    "demie_vie" : lambda couple: Couple(couple.x / 2, couple.y),
+    "ssqrt" : lambda couple: couple.apply(ssqrt),
+    "quatre_vingt" : lambda couple : couple.apply(lambda v: v * 0.8),
+    "lineaire": lambda couple : couple.apply(
+        lambda x: x - RESISTANCE
+    ),
+    "safe_inverse" : lambda couple : couple.apply(
+        lambda x: 1/(x + EPSILON)
+    ),
+    "true_drag" : lambda couple : couple.apply(
+        lambda x: 0.5 * 1.293 * x * (20 * 20) * 1.05
+    )
+}
+
+IDENTITE = strategies_resistance["identite"]
 
 
-# TODO: niveaux et collision
+# TODO : collision
 class MoteurPhysique:
-    def __init__(self, personnage, vmax: float,
-                 gravite: float = 9.8, resistance: Callable[[Couple], Couple] = identite):
-        """
-        ATTENTION : config_niveau doit avoir été load préalablement
-        """
-        self.personnage = personnage
+    def __init__(self, config: Configuration, vmax: Couple,
+                gravite: float = 0.02, resistance: Callable[[Couple], Couple] = IDENTITE):
+        self.config = config
+        self.personnage: Personnage = self.config.personnage if self.config.personnage else Personnage((0, 0), 0, 0)
         self.vmax = vmax
-        self.vmin = 0.005
+        self.vmin = 0.05
         self.gravite = gravite
         self.vitesse: Couple = ORIGIN       # vx, vy
         self.resistance: Callable[[Couple], Couple] = resistance        # resistance de l'air
-
+        self.onblock: bool = True
 
     def onclick(self, click: Couple) -> None:
+        if not self.onblock:
+            return
+
+        self.onblock = False
         curr_pos = tuple_merge(self.personnage.get_position())
         self.vitesse += (click - curr_pos)
-
-    def update(self):
-        self.vitesse -= self.resistance(self.vitesse)
-        self.vitesse -= Couple(0.0, self.gravite)
-
-        if abs(self.vitesse.x) < self.vmin:      self.vitesse.x = 0.0
-        if abs(self.vitesse.y) < self.vmin:      self.vitesse.y = 0.0
-
-        self.vitesse.x = min(self.vmax, self.vitesse.x)
-        self.vitesse.y = min(self.vmax, self.vitesse.y)
-
-        curr_pos = tuple_merge(self.personnage.get_position())
-        curr_pos += self.vitesse
-        self.personnage.set_position(couple_split(curr_pos))
+        print("click")
+        # print(f"{((click - curr_pos).x, (click - curr_pos).y) =}")
 
 
+    def get_cote_collision(self, position_perso: Couple, taille_perso: Couple,
+        position_bloc: Couple, taille_bloc: Couple, vitesse: Couple) -> Direction:
+        # on sait déjà qu'il y a collision, on cherche juste de quel coté
+        # vérifie que la vitesse vas dans le bon sens -> qu'il y une collision dans cet axe
 
-demie_vie = (lambda couple: Couple(couple.x / 2, couple.y / 2))
-def ssqrt(x: float) -> float:
-    # signed square root
-    if x < 0: return -sqrt(abs(x))
-    return sqrt(x)
-racine_signe = (lambda couple: Couple(ssqrt(couple.x), ssqrt(couple.y)))
-soixante_dix_pourcent = lambda couple : Couple(couple.x * 0.7, couple.y * 0.7)
-inverse = lambda couple: Couple(1 / couple.x, 1/ couple.y)
-drag = lambda couple : Couple(0.5 * 1.293 * couple.x * (20 * 20) * 1.05, 0.5 * 1.293 * couple.y * (20 * 20) * 1.05)
-RESISTANCE = 100
-linaire = lambda couple : Couple(couple.x - RESISTANCE, couple.y - RESISTANCE)
+        collision_gauche = (position_perso.x + taille_perso.x) - position_bloc.x
+        collision_droite = (position_bloc.x + taille_bloc.x) - position_perso.x
+        collision_haut = (position_perso.y + taille_perso.y) - position_bloc.y
+        collision_bas = (position_bloc.y + taille_bloc.y) - position_perso.y
 
-# tests
-if __name__ == '__main__':
-    from matplotlib.pyplot import plot, show, title, scatter, axis
+        collision_min = min(collision_droite, collision_gauche, collision_haut, collision_bas)
+        print(f"{collision_droite = }, {collision_gauche = }, {collision_haut = }, {collision_bas = }")
+        print(f"{collision_min = }")
 
 
-    def test_gravite(counter: int, strategie, click):
-        perso = Personnage((0, 0), 100, 100)
-        mp = MoteurPhysique(perso, 20, 3, strategie)  # 6.5
-        mp.onclick(click)
+        if collision_min == collision_droite and vitesse.x < 0:
+            return DROITE
 
-        positions = list()
-        positions.append((0, 0))
-        vitesses = []
+        if collision_min == collision_gauche and vitesse.x > 0:
+            return GAUCHE
 
-        while counter > 0 and perso.get_position()[1] > -1:
-            counter -= 1
-            # print()
-            # print(f"{mp.vitesse.__str__() = }")
-            # print(f"{p.get_position() = }")
-            mp.update()
-            counter -= 1
-            positions.append(perso.get_position())
-            vitesses.append(couple_split(mp.vitesse))
+        if collision_min == collision_haut and vitesse.y > 0:
+            return HAUT
 
-        return positions, vitesses
+        if collision_min == collision_bas and vitesse.y < 0:
+            return BAS
 
+        # normalement impossible
+        return NUL_DIREC
 
-    def affiche_resultats(p, v, nom, click):
-        p0, p1 = [a[0] for a in p], [a[1] for a in p]
-        v0, v1 = [a[0] for a in v], [a[1] for a in v]
-        print(f"{p = }")
-        scatter(p0, p1)
-        cx, cy = couple_split(click)
-        scatter(cx, cy)
-        title(f"{nom} (positions scattered)")
-        axis('equal')
-        show()
-
+    def check_collision(self, position_perso: Couple, taille_perso: Couple, dico_bloc: dict,
+        vitesse: Couple) -> tuple[Bloc | None, Direction]:
         """
-        scatter(v0, v1)
-        title(f"{nom} (vitesses scattered)")
-        axis('equal')
-        show()
-
-        plot(p)
-        plot(v)
-        title(f"{nom} (traced)")
-        axis('equal')
-        show()
+        Vérifie si il y a collision à la prochaine update.
+        Si oui, renvoie le bloc responsable et la direction du contact
         """
 
+        nouvelle_position_perso = position_perso + vitesse
+        for liste_blocs in dico_bloc.values():
+            for bloc in liste_blocs:
+                position_bloc = tuple_merge(bloc.get_position())
+                taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
 
-    taille = 40
-    coords_click = Couple(100, 30)
+                if ((nouvelle_position_perso.x < position_bloc.x + taille_bloc.x)   and
+                    (nouvelle_position_perso.x + taille_perso.x > position_bloc.x)  and
+                    (nouvelle_position_perso.y < position_bloc.y + taille_bloc.y)   and
+                    (nouvelle_position_perso.y + taille_perso.y > position_bloc.y)
+                ):
+                    return bloc, self.get_cote_collision(nouvelle_position_perso, taille_perso, position_bloc, taille_bloc, vitesse)
 
-    p, v = test_gravite(taille, linaire, coords_click)
-    affiche_resultats(p, v, "linéaire", coords_click)
+        return None, NUL_DIREC
 
-    p, v = test_gravite(taille, demie_vie, coords_click)
-    affiche_resultats(p, v, "demie_vie", coords_click)
 
-    p, v = test_gravite(taille, racine_signe, coords_click)
-    affiche_resultats(p, v, "racine_signe", coords_click)
 
-    p, v = test_gravite(taille, soixante_dix_pourcent, coords_click)
-    affiche_resultats(p, v, "soixante_dix_pourcent", coords_click)
+    def update(self) -> bool:
+        """ renvoie true si le bloc objectif est atteint """
+        printwarn("===== nouvelle frame =====", sev="LOG")
 
-    p, v = test_gravite(taille, inverse, coords_click)
-    affiche_resultats(p, v, "inverse", coords_click)
+        self.vitesse = self.resistance(self.vitesse)
+        if not self.onblock:
+            self.vitesse.y += self.gravite
 
-    p, v = test_gravite(taille, drag, coords_click)
-    affiche_resultats(p, v, "true drag", coords_click)
+        self.vitesse.apply( lambda v: 0.0 if abs(v) < self.vmin else v )
+        capped_speed = self.vitesse.copy()
+
+        capped_speed.x = sign(capped_speed.x) * min(abs(capped_speed.x), self.vmax.x)
+        capped_speed.y = sign(capped_speed.y) * min(abs(capped_speed.y), self.vmax.y)
+
+        position_perso = tuple_merge(self.personnage.get_position())
+        taille_perso = tuple_merge((self.personnage.get_largeur(), self.personnage.get_hauteur()))
+
+        if capped_speed.x == 0 and capped_speed.y == 0:
+            self.personnage.set_position(couple_split(position_perso + capped_speed))
+            return False
+
+        bloc, direction = self.check_collision(position_perso, taille_perso, self.config.dico_bloc, capped_speed)
+        if not bloc:
+            # prédicteur
+            next_speed = self.resistance(capped_speed.copy())
+            next_speed.y += self.gravite
+            next_frame_collision, _ = self.check_collision(position_perso + capped_speed, taille_perso, self.config.dico_bloc, next_speed)
+            if not next_frame_collision:
+                self.onblock = False
+
+            self.personnage.set_position(couple_split(position_perso + capped_speed))
+            return False
+
+        print(f"capped_speed: {capped_speed}")
+        print("collision!")
+
+        if isinstance(bloc, BlocObjectif):
+            return True
+
+        position_bloc = tuple_merge(bloc.get_position())
+        taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
+        print(f"{taille_bloc.__str__() = } ")
+        print(f"{position_bloc.__str__() = }")
+        fltk.rectangle(position_bloc.x, position_bloc.y, position_bloc.x + taille_bloc.x, position_bloc.y + taille_bloc.y, "red")
+
+        if direction == GAUCHE:
+            self.vitesse.x = capped_speed.x = 0.0
+            position_perso.x = position_bloc.x - taille_perso.x
+
+        if direction == DROITE:
+            self.vitesse.x = capped_speed.x = 0.0
+            position_perso.x = position_bloc.x + taille_bloc.x
+
+        if direction == HAUT:
+            self.onblock = True
+            self.vitesse.y = capped_speed.y = 0.0
+            position_perso.y = position_bloc.y - taille_perso.y
+
+        if direction == BAS:
+            self.vitesse.y = capped_speed.y = 0.0
+            position_perso.y = position_bloc.y + taille_bloc.y
+
+        if direction == NUL_DIREC:
+            print("nul direc!")
+
+        self.personnage.set_position(couple_split(position_perso + capped_speed))
+        return False

@@ -20,7 +20,7 @@ class HomeScreen:
 
     def init_window(self):
 
-        cree_fenetre(self.width, self.height)
+        cree_fenetre(self.width, self.height, frequence=60)
 
         x, y = 500, 400
         image(x, y, fichier='assets/img3.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='im')
@@ -77,7 +77,7 @@ class Map:
 
         image(x, y, 'assets/carte2.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='carte')
 
-    def is_click_on_button(self, event_location, btn_top, btn_bot) -> bool:
+    def isClick_on_button(self, event_location, btn_top, btn_bot) -> bool:
 
         return (self.btn_niveau_left <= abscisse(event_location) <= self.btn_niveau_right
                 and btn_top <= ordonnee(event_location) <= btn_bot)
@@ -97,19 +97,19 @@ class Map:
 
             if type_event == "ClicGauche":
 
-                if self.is_click_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
+                if self.isClick_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
 
                     level_is = 2
 
                     running = False
 
-                elif self.is_click_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
+                elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
 
                     level_is = 1
 
                     running = False
 
-                elif self.is_click_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
+                elif self.isClick_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
 
                     level_is = 0
 
@@ -136,9 +136,6 @@ class Level:
         self.blocs = blocs
         self.img = img
 
-        self.spawn_x = 900
-        self.spawn_y = 300
-
     def init_window(self):
 
         cree_fenetre(self.width, self.height)
@@ -147,50 +144,15 @@ class Level:
 
         image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
-    def init_level(self):
-
-        image(self.spawn_x, self.spawn_y, 'assets/mouton_1.png', largeur=100, hauteur=100, ancrage='center')
-
     def launch_level(self):
-
         self.init_window()
-        self.init_level()
 
-        running = True
-
-        while running:
-
-            event = donne_ev()
-            type_event = type_ev(event)
-
-            if type_event == "Quitte":
-                running = False
-
-            mise_a_jour()
-
-        ferme_fenetre()
+    def draw_player(self, coords):
+        taille_joueur = 50
+        efface("player")
+        rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
 
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)
-
-
-blocs_level_1 = {
-    "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
-    "platforms": [(0, 715, 1000, 800), (0, 600, 125, 715), (0, 485, 225, 600), (875, 600, 1000, 715),
-                  (825, 485, 1000, 600), (440, 485, 590, 595)],
-    "spawn_player" : [(850, 435, 900, 485)]}
-
-image_level_1 = "img_level_1.png"
-
-test = HomeScreen()
-test.launch()
-
-carte = Map()
-level_selected = carte.choose_level()
-
-levels = [Level1(blocs_level_1, image_level_1)]
-
-if carte.launch_level:
-    levels[level_selected].launch_level()

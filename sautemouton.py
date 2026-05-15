@@ -1,34 +1,57 @@
-import data
-import physique
-import screens
+from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance, printwarn
+from screens import HomeScreen, Map, Level1
+from data import Configuration
+from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre
 
-game = screens.HomeScreen()
-game.launch()
+printwarn("test1")
+printwarn("test2", sev="ERROR")
 
-carte = screens.Map()
-level_selected = carte.choose_level()
+def debut():
 
-blocs_level_1 = {
-    "murs": [(0, 0, 1, 800), (0, 800, 999, 800), (1000, 800, 998, 0), (0, 0, 999, 0)],
-    "platforms": [(0, 715, 1000, 800), (0, 600, 125, 715), (0, 485, 225, 600), (875, 600, 1000, 715),
-                  (825, 485, 1000, 600), (440, 485, 590, 595)],
-    "spawn_player" : [(850, 435, 900, 485)]}
+    config = Configuration("all_levels/level1.txt")
 
-image_level_1 = "img_level_1.png"
+    images = ["img_level_1.png"]
 
-levels = [screens.Level1(blocs_level_1, image_level_1)]
+    mp = MoteurPhysique(config, Couple(10, 19), gravite=2, resistance=strategies_resistance["quatre_vingt"])
 
-if carte.launch_level:
-    levels[level_selected].launch_level()
+    home_screen = HomeScreen()
+    home_screen.launch()
 
-    player = data.Personnage((900,300),100, 100)
+    carte = Map()
+    niveau = carte.choose_level()
 
-    physique_game = physique.MoteurPhysique(player)
+    levels = [Level1(config.dico_bloc, images[0])]
 
-
+    if carte.launch_level:
+        levels[niveau].launch_level()
 
 
-# tache 1: Theo
-# tache 2: Adam
-# tache 3: Maverick
-# tache 4: Adam
+    running = True
+    while running:
+        event = donne_ev()
+        type_event = type_ev(event)
+
+        if type_event == "Quitte":
+            running = False
+
+        if type_event == "ClicGauche":
+            click_coords = abscisse(event), ordonnee(event)
+            mp.onclick(tuple_merge(click_coords))
+
+        objectif_atteint = mp.update()
+        if objectif_atteint:
+            print("gagné!")
+            running = False
+        levels[niveau].draw_player(mp.personnage.get_position())
+        print(f"position: {mp.personnage.get_position()}")
+        print(f"vitesse: {mp.vitesse}")
+        print(f"on block: {mp.onblock}")
+
+        mise_a_jour()
+
+    ferme_fenetre()
+
+
+
+
+debut()

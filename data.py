@@ -34,10 +34,9 @@ class Personnage:
 
 
 class Bloc:
-
     def __init__(self, position, typebloc, largeur, hauteur)-> None:
         self.__position = position #(x,y)
-        self.__typebloc = typebloc #elastique,glace,bouee,derapage,objectif
+        self.__typebloc = typebloc   #objet
         self.__largeur = largeur
         self.__hauteur = hauteur
 
@@ -54,6 +53,24 @@ class Bloc:
         return self.__hauteur
 
 
+class BlocObjectif(Bloc):
+    def __init__(self, position, largeur, hauteur) -> None:
+        super().__init__(position, "objectif", largeur, hauteur)
+        self.solide = False
+        self.viscosite = 0.0
+
+VISCOSITE_GLACE = 5.0
+class BlocGlace(Bloc):
+    def __init__(self, position, largeur, hauteur) -> None:
+        super().__init__(position, "glace", largeur, hauteur)
+        self.solide = True
+        self.viscosite = VISCOSITE_GLACE
+
+class BlocPlateforme(Bloc):
+    def __init__(self, position, typebloc, largeur, hauteur) -> None:
+        super().__init__(position, typebloc, largeur, hauteur)
+        self.solide = True
+        self.viscosite = 1.0
 
 
 class Configuration:
@@ -64,6 +81,7 @@ class Configuration:
         self.dico_bloc={}
         self.load(nom_niveaux)#dico avec comme cle le typebloc
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
+        print(self.dico_bloc)
 
     def get_objectif(self) -> Bloc:
         return self.dico_bloc["objectif"][0]
@@ -125,41 +143,20 @@ class Configuration:
                 largeur = int(largeur)
                 hauteur = int(hauteur)
 
-                bloc = Bloc((x1, y1), typebloc, largeur, hauteur)
-
                 if typebloc not in self.dico_bloc:
                     self.dico_bloc[typebloc] = []
 
+                if typebloc=="glace":
+                    bloc = BlocGlace((x1, y1), largeur, hauteur)
+
+                elif typebloc== "objectif":
+                    bloc = BlocObjectif((x1, y1), largeur, hauteur)
+
+                else:
+                    bloc = BlocPlateforme((x1, y1), typebloc, largeur, hauteur)
+
+
+
+
                 self.dico_bloc[typebloc].append(bloc)
         self.personnage = Personnage((x, y), largeur1, hauteur1)
-
-
-
-def collision(personnage, dico_bloc):
-    px, py = personnage.get_position()
-    pl = personnage.get_largeur()
-    ph = personnage.get_hauteur()
-
-    for liste_blocs in dico_bloc.values():
-        for bloc in liste_blocs:
-            bx, by = bloc.get_position()
-            bl = bloc.get_largeur()
-            bh = bloc.get_hauteur()
-            if (px < bx + bl) and (px + pl > bx) and (py < by + bh) and (py + ph > by):
-                return bloc
-
-    return None
-
-def victoire(personnage, dico_bloc) -> bool:
-    bloc = collision(personnage, dico_bloc)
-    return bloc is not None and bloc.get_typebloc() == "objectif"
-
-
-    
-
-
-
-
-
-    
-
