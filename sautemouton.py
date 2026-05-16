@@ -1,7 +1,7 @@
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance, printwarn
 from screens import HomeScreen, Map, Level1, Level2, Level3
 from data import Configuration
-from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle
+from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface
 
 printwarn("test1")
 printwarn("test2", sev="ERROR")
@@ -43,6 +43,8 @@ def debut():
             click_coords = abscisse(event), ordonnee(event)
             mp.onclick(tuple_merge(click_coords))
 
+        level.draw_jump(mp.personnage.get_position())
+
         objectif_atteint = mp.update()
 
         if objectif_atteint:
@@ -50,6 +52,7 @@ def debut():
             running = False
 
         level.draw_player(mp.personnage.get_position())
+
 
         print(f"position: {mp.personnage.get_position()}")
         print(f"vitesse: {mp.vitesse}")

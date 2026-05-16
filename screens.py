@@ -1,6 +1,6 @@
 from fltk import *
 from data import *
-
+from time import sleep
 
 class HomeScreen:
 
@@ -136,6 +136,8 @@ class Level:
         self.blocs = blocs
         self.img = img
 
+        self.points_trajectoire = []
+
     def init_window(self):
 
         cree_fenetre(self.width, self.height)
@@ -151,6 +153,33 @@ class Level:
         taille_joueur = 25
         efface("player")
         rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
+
+    def draw_jump(self, coords):
+
+        # Attend 1 seconde avant d'ajouter le point
+        sleep(1)
+
+        # Ajoute la nouvelle position
+        self.points_trajectoire.append(coords)
+
+        # Si la liste dépasse 60 éléments
+        if len(self.points_trajectoire) > 60:
+            # Supprime la plus ancienne position
+            self.points_trajectoire.pop(0)
+
+        # Efface tous les anciens cercles
+        efface("jump")
+
+        # Redessine les points restants
+        for point in self.points_trajectoire:
+            cercle(
+                point[0],
+                point[1],
+                5,
+                couleur="white",
+                remplissage="white",
+                tag="jump"
+            )
 
 
 class Level1(Level):
