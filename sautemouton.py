@@ -1,7 +1,7 @@
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
 from screens import HomeScreen, Map, Level1, Level2, Level3
 from data import Configuration
-from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
+from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche, touche
 
 
 def debut():
@@ -29,11 +29,12 @@ def debut():
     running = True
     click_coords = mp.personnage.get_position()
 
+    initialize_position = mp.personnage.get_position()
+
     while running:
 
         event = donne_ev()
         type_event = type_ev(event)
-
 
         if type_event == "Quitte":
             running = False
@@ -45,6 +46,13 @@ def debut():
         if type_event == "ClicDroit":
             efface("direction_jump")
             mp.onclick(tuple_merge(click_coords))
+
+        if type_event == "Touche":
+            if touche(event) == "m":
+
+                print(True)
+
+                mp.personnage.set_position(initialize_position)
 
         level.draw_jump(mp.personnage.get_position())
 

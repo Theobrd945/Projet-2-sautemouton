@@ -198,10 +198,41 @@ class Level:
                 tag="jump"
             )
 
+    from math import sqrt
 
     def draw_direction_jump(self, coords_player, coords_click):
         efface("direction_jump")
-        fleche(coords_player[0], coords_player[1], coords_click[0], coords_click[1], couleur="white", epaisseur=5, tag="direction_jump")
+
+        x1, y1 = coords_player
+        x2, y2 = coords_click
+
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = sqrt(dx ** 2 + dy ** 2)
+
+        if distance > 300:
+            longueur = 150
+        else:
+            longueur = distance * 0.5
+
+        if distance != 0:
+            ux = dx / distance
+            uy = dy / distance
+        else:
+            ux = uy = 0
+
+        end_x = x1 + ux * longueur
+        end_y = y1 + uy * longueur
+
+        ligne(x1, y1, end_x, end_y,
+              couleur="white",
+              epaisseur=5,
+              tag="direction_jump")
+
+        fleche(x1, y1, end_x, end_y,
+               couleur="white",
+               epaisseur=5,
+               tag="direction_jump")
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
