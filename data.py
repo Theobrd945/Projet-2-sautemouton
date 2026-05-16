@@ -2,7 +2,7 @@ from math import sqrt
 from typing import Callable, Protocol
 
 
-class Queue[T]:
+"""class Queue[T]:
     def __init__(self, queue: list[T] | None = None) -> None:
         self.queue = queue if queue else []
 
@@ -48,7 +48,7 @@ class Stack[T]:
         for item in reversed(self.stack):
             s += f"{item}, "
         return f"[{s}]" if s else "[empty]"
-
+"""
 class Couple:
     def __init__(self, x: float, y: float):
         self.x = x
@@ -84,8 +84,8 @@ class Couple:
         return sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
 
 
-def printwarn(s, sev = "warn"):
-    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")
+"""def printwarn(s, sev = "warn"):
+    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")"""
 
 # noinspection PyPep8Naming
 def tuple_merge(T: tuple) -> Couple:
