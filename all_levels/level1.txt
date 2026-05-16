@@ -1,5 +1,5 @@
 [PERSONNAGE]
-position=80,680
+position=600,680
 largeur=50
 hauteur=50
 

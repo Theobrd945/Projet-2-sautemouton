@@ -159,7 +159,7 @@ class Level:
                 elif typebloc == "objectif":
                     image(x+largeur//2,y+hauteur//2,"assets/objectif.png",largeur,hauteur)
                 elif typebloc == "platform":
-                    image(x+largeur//2,y+hauteur//2,"assets/terre.png",largeur,hauteur)
+                    image(x+largeur//2,y+hauteur//2,"assets/terre.png",largeur,hauteur+10)
 
 
 
