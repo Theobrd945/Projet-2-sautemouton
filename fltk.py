@@ -30,7 +30,7 @@ try:
     from PIL import Image, ImageTk
 
     PIL_AVAILABLE = True
-    print("Bibliothèque PIL chargée.", file=sys.stderr)
+    # print("Bibliothèque PIL chargée.", file=sys.stderr)
     PILImage = Image.Image
     __pil_cache: Dict[Tuple[Path, Optional[int], Optional[int], int], PILImage] = {}
 except ImportError as e:

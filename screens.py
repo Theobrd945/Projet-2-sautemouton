@@ -150,6 +150,22 @@ class Level:
     def launch_level(self):
         self.init_window()
 
+    def draw_blocs(self):
+        for typebloc, liste_blocs in self.blocs.items():
+            for bloc in liste_blocs:
+                x, y = bloc.get_position()
+                largeur = bloc.get_largeur()
+                hauteur = bloc.get_hauteur()
+
+                if typebloc == "glace":
+                    image(x+largeur//2,y+hauteur//2,"assets/glace.png",largeur,hauteur)
+                elif typebloc == "objectif":
+                    image(x+largeur//2,y+hauteur//2,"assets/objectif.png",largeur,hauteur)
+                elif typebloc == "platform":
+                    image(x+largeur//2,y+hauteur//2,"assets/terre.png",largeur,hauteur+10)
+
+
+
     def draw_player(self, coords):
         taille_joueur = 25
         efface("player")
