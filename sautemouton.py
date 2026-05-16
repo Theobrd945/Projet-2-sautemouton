@@ -52,6 +52,7 @@ def debut():
 
     if carte.launch_level:
         levels[niveau].launch_level()
+        levels[niveau].draw_blocs()
 
     running = True
     while running:

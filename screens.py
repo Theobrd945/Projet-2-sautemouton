@@ -147,6 +147,24 @@ class Level:
     def launch_level(self):
         self.init_window()
 
+    def draw_blocs(self):
+        for typebloc, liste_blocs in self.blocs.items():
+            for bloc in liste_blocs:
+                x, y = bloc.get_position()
+                largeur = bloc.get_largeur()
+                hauteur = bloc.get_hauteur()
+
+                couleur = "grey"
+
+                if typebloc == "glace":
+                    couleur = "cyan"
+                elif typebloc == "objectif":
+                    couleur = "green"
+                elif typebloc == "platform":
+                    couleur = "brown"
+                if typebloc !="mur":
+                    rectangle(x,y,x + largeur,y + hauteur,couleur=couleur,remplissage=couleur)
+
     def draw_player(self, coords):
         taille_joueur = 50
         efface("player")
