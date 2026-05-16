@@ -1,19 +1,24 @@
 [PERSONNAGE]
-position=850,435
+position=80,680
 largeur=50
 hauteur=50
 
 [BLOCS]
-mur;0,0;1;800
-mur;0,800;999;800
-mur;1000,800;998;0
-mur;0,0;999;0
+mur;0,750;1000;50
 
-platform;0,715;1000;800
-platform;0,600;125;715
-platform;0,485;225;600
-platform;875,600;1000;715
-platform;825,485;1000;600
-platform;440,485;590;595
+mur;0,0;40;800
+mur;960,0;40;800
 
-objectif;120,435;20;20
+platform;120,650;180;25
+
+platform;380,580;150;25
+
+glace;620,520;180;25
+
+platform;450,420;140;25
+
+platform;220,320;140;25
+
+platform;520,220;160;25
+
+objectif;850,140;60;60
