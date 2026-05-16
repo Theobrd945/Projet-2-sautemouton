@@ -3,9 +3,6 @@ from screens import HomeScreen, Map, Level1, Level2, Level3
 from data import Configuration
 from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
 
-printwarn("test1")
-printwarn("test2", sev="ERROR")
-
 
 def debut():
 
@@ -31,9 +28,6 @@ def debut():
 
     running = True
     click_coords = mp.personnage.get_position()
-
-    fleche(0, 5, 1000, 5, couleur="white", epaisseur=5, tag="fleche")
-    rectangle(0, 0, 25, 25, couleur ="red")
 
     while running:
 
@@ -61,11 +55,6 @@ def debut():
             running = False
 
         level.draw_player(mp.personnage.get_position())
-
-
-        print(f"position: {mp.personnage.get_position()}")
-        print(f"vitesse: {mp.vitesse}")
-        print(f"on block: {mp.onblock}")
 
         mise_a_jour()
 
