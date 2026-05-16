@@ -15,7 +15,6 @@ def affiche_queue(
     if len(positions) > taille_traine and taille_traine > 0:
         positions.pop()
         efface(f"uid:{current_ids.pop()}")
-        print(len(positions))
 
     for position in positions:
         position = position if isinstance(position, Couple) else Couple(position[0], position[1])
@@ -69,7 +68,6 @@ def debut():
         objectif_atteint = mp.update()
 
         if objectif_atteint:
-            print("gagné!")
             running = False
 
         position_perso = mp.personnage.get_position()
@@ -85,16 +83,11 @@ def debut():
             while not predictions_ids.is_empty():
                 efface(f'uid:{predictions_ids.pop()}')
 
-            predictions = Queue(mp.predict(100, pos_souris, True))
+            predictions = Queue(mp.predict(pos_souris))
             unique_id_count = affiche_queue(
                 predictions, predictions_ids, unique_id_count, taille_perso,
                 taille_traine=-1, taille_bulles=2, remplissage='white'
             )
-
-
-        print(f"position: {mp.personnage.get_position()}")
-        print(f"vitesse: {mp.vitesse}")
-        print(f"on block: {mp.onblock}")
 
         mise_a_jour()
 

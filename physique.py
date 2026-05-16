@@ -1,64 +1,5 @@
 from typing import Callable
-from data import Personnage, Configuration, Bloc, BlocObjectif
-from math import sqrt
-import fltk
-
-class Couple:
-    def __init__(self, x: float, y: float):
-        self.x = x
-        self.y = y
-
-    """ couple (couple, y) de réels """
-    # distribue l'application sur les membres du couple
-    def apply(self, application: Callable[..., float]) -> 'Couple':
-        self.x = application(self.x)
-        self.y = application(self.y)
-        return self
-
-    def copy(self) -> 'Couple':
-        return Couple(self.x, self.y)
-
-    def norme(self) -> float:
-        return sqrt(self.x ** 2 + self.y ** 2)
-
-    def __add__(self, other: 'Couple') -> 'Couple':
-        return Couple(self.x + other.x, self.y + other.y)
-
-    def __sub__(self, other: 'Couple') -> 'Couple':
-        return Couple(self.x - other.x, self.y - other.y)
-
-    def __mul__(self, other: float) -> 'Couple':
-        return self.apply(lambda v: v * other)
-
-    def __str__(self) -> str:
-        return f"({self.x}, {self.y})"
-
-
-def printwarn(s, sev = "warn"):
-    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")
-
-# noinspection PyPep8Naming
-def tuple_merge(T: tuple) -> Couple:
-    """
-    affiche un avertissement à chaque utilisation.
-    Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
-    """
-    # printwarn("utilisation d'une fonction temporaire tuple_merge")
-    return Couple(T[0], T[1])
-
-
-# noinspection PyPep8Naming
-def couple_split(T: Couple) -> tuple:
-    """
-        affiche un avertissement à chaque utilisation.
-        Utilisé comme remplacement en attendant l'utilisation de la classe couple dans le reste du projet
-        """
-    # printwarn("utilisation d'une fonction temporaire couple_split")
-    return T.x, T.y
-
-
-def sign(x: float) -> int: return -1 if x < 0 else 1
-def ssqrt(x: float) -> float: return -sqrt(abs(x)) if x < 0 else sqrt(x)
+from data import Couple, Personnage, Configuration, Bloc, BlocObjectif, couple_split, printwarn, sign, ssqrt, tuple_merge
 
 
 class Direction: ...
@@ -107,7 +48,7 @@ class MoteurPhysique:
         self.onblock = False
         curr_pos = tuple_merge(self.personnage.get_position())
         self.vitesse += click - (curr_pos + Couple(self.personnage.get_largeur() // 2, self.personnage.get_hauteur() // 2))
-        printwarn("click")
+        # printwarn("click")
         # print(f"{((click - curr_pos).x, (click - curr_pos).y) =}")
 
 
@@ -164,7 +105,7 @@ class MoteurPhysique:
 
     def update(self) -> bool:
         """ renvoie true si le bloc objectif est atteint """
-        printwarn("===== nouvelle frame =====", sev="LOG")
+        # printwarn("===== nouvelle frame =====", sev="LOG")
 
         self.vitesse = self.resistance(self.vitesse)
         if not self.onblock:
@@ -228,11 +169,12 @@ class MoteurPhysique:
         return False
 
 
-    def predict(self, n: int, click: Couple, dy_trim = False) -> list[Couple]:
+    def predict(self, click: Couple, n: int = 100, dx_trim = True, dy_trim = False) -> list[Couple]:
         """
         renvoie la liste des n prochaines coodonées après un clique
         dy_trim stop les prédictions à partir du moment ou le personnage touche le sol
         """
+
         coord_save = self.personnage.get_position()
         speed_save = self.vitesse
         onblock_save = self.onblock
@@ -241,7 +183,7 @@ class MoteurPhysique:
         predictions = []
         for _ in range(n):
             self.update()
-            if not (dy_trim and self.vitesse.y == 0):
+            if not (dy_trim and self.vitesse.y == 0) and not (dx_trim and self.vitesse.x == 0):
                 predictions.append(tuple_merge(self.personnage.get_position()))
 
         self.personnage.set_position(coord_save)
