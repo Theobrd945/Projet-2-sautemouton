@@ -1,4 +1,4 @@
-from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance, printwarn
+from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
 from screens import HomeScreen, Map, Level1, Level2, Level3
 from data import Configuration
 from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
@@ -16,7 +16,7 @@ def debut():
     carte = Map()
     name_level = carte.choose_level()
 
-    mp = MoteurPhysique(configs[name_level], vmax=Couple(8, 18), gravite=0.81, resistance=strategies_resistance["quatre_vingt"])
+    mp = MoteurPhysique(configs[name_level], vmax=Couple(10, 20), gravite=7, resistance=strategies_resistance["quatre_vingt"])
 
     levels = [Level1(configs[0].dico_bloc, images[0]), Level2(configs[1].dico_bloc, images[1])]
 

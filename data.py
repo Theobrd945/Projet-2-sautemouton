@@ -84,8 +84,8 @@ class Couple:
         return sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
 
 
-"""def printwarn(s, sev = "warn"):
-    return print(f"\033[{"93mWARNING" if sev == "warn" else f"31m{sev}"}\033[0m: {s}")"""
+def printwarn(s, sev = "warn"):
+    return print(f"\033[{'93mWARNING' if sev == 'warn' else f'31m{sev}'}\033[0m: {s}")
 
 # noinspection PyPep8Naming
 def tuple_merge(T: tuple) -> Couple:
