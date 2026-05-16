@@ -1,7 +1,7 @@
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance, printwarn
 from screens import HomeScreen, Map, Level1, Level2, Level3
 from data import Configuration
-from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface
+from fltk import donne_ev, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
 
 printwarn("test1")
 printwarn("test2", sev="ERROR")
@@ -30,17 +30,26 @@ def debut():
         level.launch_level()
 
     running = True
+    click_coords = mp.personnage.get_position()
+
+    fleche(0, 5, 1000, 5, couleur="white", epaisseur=5, tag="fleche")
+    rectangle(0, 0, 25, 25, couleur ="red")
 
     while running:
 
         event = donne_ev()
         type_event = type_ev(event)
 
+
         if type_event == "Quitte":
             running = False
 
         if type_event == "ClicGauche":
             click_coords = abscisse(event), ordonnee(event)
+            level.draw_direction_jump(mp.personnage.get_position(), click_coords)
+
+        if type_event == "ClicDroit":
+            efface("direction_jump")
             mp.onclick(tuple_merge(click_coords))
 
         level.draw_jump(mp.personnage.get_position())

@@ -167,7 +167,7 @@ class Level:
 
             self.dernier_point = maintenant
 
-            if len(self.points_trajectoire) > 100:
+            if len(self.points_trajectoire) > 75:
                 self.points_trajectoire.pop(0)
 
         efface("jump")
@@ -182,6 +182,10 @@ class Level:
                 tag="jump"
             )
 
+
+    def draw_direction_jump(self, coords_player, coords_click):
+        efface("direction_jump")
+        fleche(coords_player[0], coords_player[1], coords_click[0], coords_click[1], couleur="white", epaisseur=5, tag="direction_jump")
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
