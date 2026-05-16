@@ -1,5 +1,5 @@
 [PERSONNAGE]
-position=900,420
+position=900,415
 largeur=25
 hauteur=25
 
@@ -10,18 +10,18 @@ mur;0,0;0;1000
 mur;0,0;1000;0
 mur;1000,0;0;800
 
-platform;585,700;80;50
-platform;840,445;160;40
-platform;780,530;45;20
-platform;610,520;90;30
-platform;700,605;75;20
-platform;175,555;100;35
-platform;325,480;120;30
-platform;435,410;55;15
-platform;515,390;70;35
-platform;665,250;75;35
-platform;735,200;60;30
-platform;795,135;205;40
+platform;585,695;80;50
+platform;840,440;160;40
+platform;780,525;45;20
+platform;610,515;90;30
+platform;700,600;75;20
+platform;175,550;100;35
+platform;325,475;120;30
+platform;435,405;55;15
+platform;515,385;70;35
+platform;665,245;75;35
+platform;735,195;60;30
+platform;795,130;205;40
 
 glace;385,585;80;175
 glace;335,585;50;30

@@ -1,6 +1,6 @@
 from fltk import *
 from data import *
-from time import sleep
+from time import *
 
 class HomeScreen:
 
@@ -136,6 +136,7 @@ class Level:
         self.blocs = blocs
         self.img = img
 
+        self.dernier_point = 0
         self.points_trajectoire = []
 
     def init_window(self):
@@ -156,21 +157,21 @@ class Level:
 
     def draw_jump(self, coords):
 
-        # Attend 1 seconde avant d'ajouter le point
-        sleep(1)
+        maintenant = time()
 
-        # Ajoute la nouvelle position
-        self.points_trajectoire.append(coords)
+        intervalle = 0.006
 
-        # Si la liste dépasse 60 éléments
-        if len(self.points_trajectoire) > 60:
-            # Supprime la plus ancienne position
-            self.points_trajectoire.pop(0)
+        if maintenant - self.dernier_point >= intervalle:
 
-        # Efface tous les anciens cercles
+            self.points_trajectoire.append(coords)
+
+            self.dernier_point = maintenant
+
+            if len(self.points_trajectoire) > 100:
+                self.points_trajectoire.pop(0)
+
         efface("jump")
 
-        # Redessine les points restants
         for point in self.points_trajectoire:
             cercle(
                 point[0],

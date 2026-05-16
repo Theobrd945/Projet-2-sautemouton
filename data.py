@@ -1,3 +1,27 @@
+class Queue:
+    def __init__(self, queue: list | None = None) -> None:
+        self.queue = queue if queue else []
+
+    def pop(self):
+        return self.queue.pop(-1)
+
+    def push(self, item) -> None:
+        self.queue.insert(0, item)
+
+    def is_empty(self) -> bool:
+        return len(self.queue) == 0
+
+    def __str__(self) -> str:
+        s = ""
+        for item in self.queue:
+            s += f"({item}) -> "
+        return s[:-4] if s else "(empty)"
+
+    def __len__(self) -> int:
+        return len(self.queue)
+
+    def __iter__(self):
+        return iter(self.queue)
 
 
 class Personnage:
