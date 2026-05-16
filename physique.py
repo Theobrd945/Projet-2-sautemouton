@@ -203,7 +203,6 @@ class MoteurPhysique:
 
         position_bloc = tuple_merge(bloc.get_position())
         taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
-        fltk.rectangle(position_bloc.x, position_bloc.y, position_bloc.x + taille_bloc.x, position_bloc.y + taille_bloc.y, "red")
 
         if direction == GAUCHE:
             self.vitesse.x = capped_speed.x = 0.0

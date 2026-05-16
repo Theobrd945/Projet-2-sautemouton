@@ -154,16 +154,14 @@ class Level:
                 largeur = bloc.get_largeur()
                 hauteur = bloc.get_hauteur()
 
-                couleur = "grey"
-
                 if typebloc == "glace":
-                    couleur = "cyan"
+                    image(x+largeur//2,y+hauteur//2,"assets/glace.png",largeur,hauteur)
                 elif typebloc == "objectif":
-                    couleur = "green"
+                    image(x+largeur//2,y+hauteur//2,"assets/objectif.png",largeur,hauteur)
                 elif typebloc == "platform":
-                    couleur = "brown"
-                if typebloc !="mur":
-                    rectangle(x,y,x + largeur,y + hauteur,couleur=couleur,remplissage=couleur)
+                    image(x+largeur//2,y+hauteur//2,"assets/terre.png",largeur,hauteur)
+
+
 
     def draw_player(self, coords):
         taille_joueur = 50
