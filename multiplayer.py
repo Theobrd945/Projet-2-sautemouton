@@ -1,6 +1,7 @@
 from physique import MoteurPhysique, Couple, strategies_resistance, tuple_merge
 from data import Personnage
 from fltk import *
+from math import sqrt
 
 class Multi :
 
@@ -29,6 +30,34 @@ class Multi :
         efface("player_2")
         rectangle(cords_player_2[0], cords_player_2[1], cords_player_2[0] + 25, cords_player_2[1] + 25, couleur='blue', remplissage='blue', tag='player_2')
 
+    def draw_direction_jump(self, coords_player, coords_click):
+        efface("direction_jump")
+
+        x1, y1 = coords_player
+        x2, y2 = coords_click
+
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = sqrt(dx ** 2 + dy ** 2)
+
+        if distance > 300:
+            longueur = 150
+        else:
+            longueur = distance * 0.5
+
+        if distance != 0:
+            ux = dx / distance
+            uy = dy / distance
+        else:
+            ux = uy = 0
+
+        end_x = x1 + ux * longueur
+        end_y = y1 + uy * longueur
+
+        ligne(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
+
+        fleche(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
+
     def players(self):
 
         self.init_window()
@@ -50,6 +79,17 @@ class Multi :
                 running = False
 
             if type_event == "ClicGauche":
+
+                click_coords = abscisse(event), ordonnee(event)
+
+                if tour % 2 == 0:
+                    self.draw_direction_jump( self.mp_1.personnage.get_position(), click_coords)
+                else:
+                    self.draw_direction_jump(self.mp_2.personnage.get_position(), click_coords)
+
+            if type_event == "ClicDroit":
+
+                efface("direction_jump")
 
                 click_coords = abscisse(event), ordonnee(event)
 
