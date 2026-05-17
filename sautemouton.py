@@ -4,7 +4,7 @@ from screens import HomeScreen, Level, Map, Level1, Level2, Level3
 from data import Configuration, couple_split
 from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
 from solveur import naive_solver
-
+from multiplayer import Multi
 
 
 def main():
@@ -36,10 +36,7 @@ def main():
 
     levels = [Level1(configs[0].dico_bloc, images[0]), Level2(configs[1].dico_bloc, images[1])]
 
-<<<<<<< HEAD
     level = levels[0]
-=======
->>>>>>> 44bea9bdf03666957fec60822660f6f5315099ca
     if carte.launch_level:
 
         level: Level = levels[name_level]
