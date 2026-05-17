@@ -9,7 +9,7 @@ from multiplayer import Multi
 
 def main():
     score=0
-    images = ["assets/img_level_1.png", "assets/img_level_2_2.png","all_levels/img_level_3_1.png"]
+    images = ["assets/img_level_1.png", "assets/img_level_2_2.png","assets/img_level_3_1.png"]
     configs = [Configuration(image) for image in images]
 
     home_screen = HomeScreen()
