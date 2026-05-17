@@ -120,10 +120,10 @@ class Personnage:
         self.taille: Couple = taille
 
     def get_position(self) -> Couple:
-        return self.position
+        return self.position.copy()
 
     def get_taille(self) -> Couple:
-        return self.taille
+        return self.taille.copy()
 
     def set_position(self, position: Couple) -> None:
         self.position = position
@@ -139,7 +139,7 @@ class Bloc:
         return self.type_bloc
 
     def get_position(self) -> Couple:
-        return self.position
+        return self.position.copy()
 
     def get_taille(self) -> Couple:
         return self.taille
@@ -238,6 +238,7 @@ class Configuration:
 
             elif mode == "blocs":
                 typebloc, pos, taille_x, taille_y = ligne.split(";")
+                print(ligne.split(";"))
                 taille = Couple[int](int(taille_x), int(taille_y))
 
                 x1, y1 = map(int, pos.split(","))

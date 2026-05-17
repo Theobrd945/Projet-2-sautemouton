@@ -26,7 +26,10 @@ def main():
         return 0
 
     mp = MoteurPhysique(configs[name_level], vmax=Couple(10, 20), gravite=7, resistance=strategies_resistance["quatre_vingt"])
-    levels = [Level1(configs[0].dico_bloc, images[0]), Level2(configs[1].dico_bloc, images[1])]
+    levels = [
+        Level1(configs[0].dico_bloc, images[0]),
+        Level2(configs[1].dico_bloc, images[1])
+    ]
 
     level = levels[0]
     if carte.launch_level:
