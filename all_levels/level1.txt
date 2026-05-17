@@ -1,7 +1,7 @@
 [PERSONNAGE]
 position=850,455
-largeur=0
-hauteur=0
+largeur=25
+hauteur=25
 
 [BLOCS]
 plateform;0,0;1;800
@@ -16,4 +16,4 @@ plateform;825,485;175;115
 plateform;440,485;150;110
 objectif;120,435;75;75
 [HIGHSCORE]
-highscore=4
+highscore=0
