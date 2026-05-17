@@ -1,5 +1,5 @@
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
-from screens import HomeScreen, Level, Map, Level1, Level2
+from screens import HomeScreen, Level, Map, Level1, Level2, screen_end
 from data import Configuration, Queue
 from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, efface
 from solveur import naive_solver
@@ -44,7 +44,7 @@ def main():
     initialize_position = mp.personnage.get_position()
 
     solution = Queue()
-
+    gagner=False
     while running:
         event = donne_ev()
         type_event = type_ev(event)
@@ -84,6 +84,7 @@ def main():
             configs[name_level].save("level" + str(1+(name_level)) + ".txt",score)
             print("gagné!")
             running = False
+            gagner=True
 
         level.draw_jump(mp.personnage.get_position())
         level.draw_player(mp.personnage.get_position())
@@ -91,6 +92,9 @@ def main():
         mise_a_jour()
 
     ferme_fenetre()
+
+    if gagner:
+        screen_end()
 
 
 main()

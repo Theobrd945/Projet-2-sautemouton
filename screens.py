@@ -140,7 +140,7 @@ class Level:
         self.init_window(fast_window)
 
     def draw_player(self, coords: Couple, taille_joueur: Couple | None = None):
-        taille_joueur = taille_joueur if taille_joueur else Couple(25, 25)
+        taille_joueur = taille_joueur if taille_joueur else Couple(25, 20)
         efface("player")
         rectangle(coords.x, coords.y, coords.x + taille_joueur.x, coords.y + taille_joueur.y, couleur='red', remplissage='red', tag="player")
 
@@ -198,3 +198,14 @@ class Level2(Level):
 class Level3(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)
+
+def screen_end():
+    cree_fenetre(1000,800)
+    image(500, 400, 'assets/image_fin.png', largeur=1000, hauteur=800, ancrage='center', tag='carte')
+    while True:
+        event=donne_ev()
+        type_event=type_ev(event)
+        if type_event=="Quitte":
+            break
+        mise_a_jour()
+    ferme_fenetre()
