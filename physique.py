@@ -32,7 +32,14 @@ class MoteurPhysique:
     def __init__(self, config: Configuration, vmax: Couple,
                 gravite: float = 0.02, resistance: Callable[[Couple], Couple] = IDENTITE):
         self.config = config
-        self.personnage: Personnage = self.config.personnage if self.config.personnage else Personnage((0, 0), 0, 0)
+        
+        base = self.config.personnage
+
+        self.personnage = Personnage(
+            base.get_position(),
+            base.get_largeur(),
+            base.get_hauteur()
+        )
         self.vmax = vmax
         self.vmin = 0.05
         self.gravite = gravite

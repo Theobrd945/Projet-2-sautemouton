@@ -11,7 +11,7 @@ def main():
 
     configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
 
-    images = ["img_level_1.png", "img_level_2_2.png","img_level_3.png"]
+    images = ["img_level_1.png", "img_level_2_2.png","img_level_3_1.png"]
 
     home_screen = HomeScreen()
     home_screen.launch()
@@ -58,6 +58,10 @@ def main():
         if type_event == "Quitte":
             running = False
 
+        if type_event == "Touche" and touche(event) == "m":
+
+            mp.personnage.set_position(initialize_position)
+
         if type_event == "ClicGauche":
             click_coords = tuple_merge((abscisse(event), ordonnee(event)))
             level.draw_direction_jump(mp.personnage.get_position(), couple_split(click_coords))
@@ -71,11 +75,6 @@ def main():
             mp.onclick(click_coords)
             print(f"{mp.personnage.get_position() = }")
 
-        if type_event == "Touche" and touche(event) == "m":
-
-            mp.personnage.set_position(initialize_position)
-
-        level.draw_jump(mp.personnage.get_position())
 
         objectif_atteint = mp.update()
 
@@ -83,6 +82,7 @@ def main():
             print("gagné!")
             running = False
 
+        level.draw_jump(mp.personnage.get_position())
         level.draw_player(mp.personnage.get_position())
 
         mise_a_jour()
