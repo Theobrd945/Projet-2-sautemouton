@@ -1,7 +1,7 @@
 from copy import deepcopy
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
 from screens import HomeScreen, Level, Map, Level1, Level2, Level3
-from data import Configuration, couple_split
+from data import Configuration, Queue, couple_split
 from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
 from solveur import naive_solver
 from multiplayer import Multi
@@ -41,6 +41,8 @@ def main():
     click_coords = mp.personnage.get_position()
     initialize_position = mp.personnage.get_position()
 
+    solution = Queue()
+
     while running:
         event = donne_ev()
         type_event = type_ev(event)
@@ -63,9 +65,16 @@ def main():
             efface("score")
             efface("highscore")
 
-            level.draw_score(score, configs[name_level].highscore)
-        if type_event == "Touche" and touche(event) == 'enter': ...
+        if type_event == "Touche" and touche(event) == 'Return':
+            curr_pos = mp.personnage.get_position()
+            solution, termine = naive_solver(mp)
+            mp.personnage.set_position(curr_pos)
+            if not termine:
+                print("aucune solution n'a pu être trouvée")
 
+
+        if type_event == "Touche" and touche(event) == 'space' and not solution.is_empty():
+            mp.onclick(solution.pop())
 
         objectif_atteint = mp.update()
 
