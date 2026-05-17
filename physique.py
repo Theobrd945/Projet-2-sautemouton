@@ -4,7 +4,6 @@ from data import Couple, Personnage, Configuration, Bloc, BlocObjectif, couple_s
 
 class Direction: ...
 HAUT, BAS, DROITE, GAUCHE, NUL_DIREC = (Direction() for _ in range(5))
-ORIGIN = Couple(0, 0)
 RESISTANCE = 1
 EPSILON = 1e-4
 
@@ -33,11 +32,18 @@ class MoteurPhysique:
     def __init__(self, config: Configuration, vmax: Couple,
                 gravite: float = 0.02, resistance: Callable[[Couple], Couple] = IDENTITE):
         self.config = config
-        self.personnage: Personnage = self.config.personnage if self.config.personnage else Personnage((0, 0), 0, 0)
+        
+        base = self.config.personnage
+
+        self.personnage = Personnage(
+            base.get_position(),
+            base.get_largeur(),
+            base.get_hauteur()
+        )
         self.vmax = vmax
         self.vmin = 0.05
         self.gravite = gravite
-        self.vitesse: Couple = ORIGIN       # vx, vy
+        self.vitesse: Couple = Couple()       # vx, vy
         self.resistance: Callable[[Couple], Couple] = resistance        # resistance de l'air
         self.onblock: bool = True
 
@@ -176,7 +182,7 @@ class MoteurPhysique:
         """
 
         coord_save = self.personnage.get_position()
-        speed_save = self.vitesse
+        speed_save = self.vitesse.copy()
         onblock_save = self.onblock
         self.onclick(click)
 
@@ -186,7 +192,10 @@ class MoteurPhysique:
             if not (dy_trim and self.vitesse.y == 0) and not (dx_trim and self.vitesse.x == 0):
                 predictions.append(tuple_merge(self.personnage.get_position()))
 
+        # print(f"avant set_position: {tuple_merge(self.personnage.get_position())}")
         self.personnage.set_position(coord_save)
+        # print(f"après set_position: {tuple_merge(self.personnage.get_position())}")
+        # print(f"coord_save valait: {coord_save}")
         self.vitesse = speed_save
         self.onblock = onblock_save
         return predictions
