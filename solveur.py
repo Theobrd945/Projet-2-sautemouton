@@ -1,14 +1,13 @@
-from fltk import cercle, mise_a_jour
+from fltk import cercle, donne_ev, efface, mise_a_jour, touche, type_ev
 from physique import Couple, MoteurPhysique
 from data import Queue
 
 
 def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queue[Couple], bool]:
-    id_cercles = Queue()
     clicks_solution = Queue[Couple]()
 
-    pas = 50
-    dist_max = 400
+    pas = 100
+    dist_max = 800
     clicks_possibles = [
         Couple(dx, dy)
         for dx in range(-dist_max, dist_max + 1, pas)
@@ -37,6 +36,7 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
     # etat_au_moment_d_arriver, chemin_de_clicks, key_de_ce_noeud, index_prochain_click
     pile = [(etat_initial, [], key_initial, 0)]
     essais = 0
+    profondeur_max = 20
 
     while pile and essais < essais_max:
         etat, chemin, key, idx_click = pile[-1]
@@ -52,35 +52,41 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
 
         # joue le click
         restore_etat(etat)
-        click_relatif_stocke = clicks_possibles[idx_click]
+        pos = moteur.personnage.get_position()
+        centre = pos + moteur.personnage.get_taille() * 0.5
+        click_curr = centre + clicks_possibles[idx_click]
+        moteur.onclick(click_curr)
 
-        moteur.onclick(click_relatif_stocke)
         reussite = False
-        essais_max = 0
-        while moteur.vitesse != Couple() and essais_max < 100:
-            id = id_cercles.pop() if not id_cercles.is_empty() else "ID_CERCLE1"
-            id_cercles.push(
-                cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'gray', 'gray', tag=id)
-            )
-            mise_a_jour()
+        for _ in range(30):
             reussite = moteur.update()
-            essais_max += 1
+            cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'white', 'white', tag="exploration")
+            mise_a_jour()
+
+            ev = donne_ev()
+            if type_ev(ev) == 'Touche' and touche(ev) == 'BackSpace':
+                efface("exploration")
+                mise_a_jour()
+                return clicks_solution, reussite
 
             if reussite or moteur.vitesse == Couple():
+                efface("exploration")
+                mise_a_jour()
                 break
 
         if reussite:
-            for click in chemin + [click_relatif_stocke]:
+            for click in chemin + [click_curr]:
                 clicks_solution.push(click)
             return clicks_solution, True
 
         nouvel_etat = get_etat()
         nouvelle_key = position_to_key(nouvel_etat[0])
-        pile.append((nouvel_etat, chemin + [click_relatif_stocke], nouvelle_key, 0))
+        # pile.append((nouvel_etat, chemin + [click_curr], nouvelle_key, 0))
 
         if nouvelle_key not in visites:
             visites.add(nouvelle_key)
-            pile.append((nouvel_etat, chemin + [click_relatif_stocke], nouvelle_key, 0))
+            if len(chemin) < profondeur_max:
+                pile.append((nouvel_etat, chemin + [click_curr], nouvelle_key, 0))
 
         essais += 1
         if essais % 5000 == 0:

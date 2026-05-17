@@ -77,10 +77,13 @@ class Couple[T]:
         return Couple(self.x - other.x, self.y - other.y)
 
     def __mul__(self, other: float | int) -> 'Couple':
-        return self.apply(lambda v: v * other)
+        return self.copy().apply(lambda v: v * other)
 
     def __str__(self) -> str:
         return f"({self.x}, {self.y})"
+
+    def __eq__(self, other: 'Couple') -> bool:
+        return self.x == other.x and self.y == other.y
 
     @staticmethod
     def distance(a, b) -> float:
@@ -128,7 +131,6 @@ class Personnage:
     def set_position(self, position: Couple) -> None:
         self.position = position
 
-
 class Bloc:
     def __init__(self, position: Couple, typebloc: str, taille: Couple)-> None:
         self.position = position #(x,y)
@@ -149,7 +151,7 @@ class BlocObjectif(Bloc):
     def __init__(self, position, taille) -> None:
         super().__init__(position, "objectif", taille)
         self.solide = False
-        self.viscosite = 0.0
+        self.viscosite = 1.0
 
 VISCOSITE_GLACE = 5.0
 class BlocGlace(Bloc):
@@ -167,8 +169,9 @@ class BlocPlateforme(Bloc):
 
 class Configuration:
 
-    def __init__(self, nom_niveaux: str):
+    def __init__(self, nom_niveaux: str, highscore = 0):
         self.nom_niveaux = nom_niveaux
+        self.highscore = highscore
         self.personnage = Personnage(Couple(), Couple())
         self.dico_bloc={}
         self.load(nom_niveaux)

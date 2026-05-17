@@ -1,5 +1,5 @@
 from typing import Callable
-from data import Couple, Personnage, Configuration, Bloc, BlocObjectif, couple_split, printwarn, sign, ssqrt, tuple_merge
+from data import BlocGlace, Couple, Personnage, Configuration, Bloc, BlocObjectif, couple_split, printwarn, sign, ssqrt, tuple_merge
 
 
 class Direction: ...
@@ -155,6 +155,9 @@ class MoteurPhysique:
             self.onblock = True
             self.vitesse.y = capped_speed.y = 0.0
             position_perso.y = position_bloc.y - taille_perso.y
+            if not isinstance(bloc, BlocObjectif):
+                self.vitesse.x *= bloc.viscosite  # pyright: ignore[reportAttributeAccessIssue]
+
 
         if direction == BAS:
             self.vitesse.y = capped_speed.y = 0.0

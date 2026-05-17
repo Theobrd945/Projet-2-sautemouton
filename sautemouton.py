@@ -1,14 +1,16 @@
-from copy import deepcopy
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
-from screens import HomeScreen, Level, Map, Level1, Level2, Level3
-from data import Configuration, Queue, couple_split
-from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
+from screens import HomeScreen, Level, Map, Level1, Level2
+from data import Configuration, Queue
+from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, efface
 from solveur import naive_solver
 from multiplayer import Multi
+from sys import argv
 
 
 def main():
-
+    fast_window = False
+    if len(argv) > 1 and "-fw" in argv:
+        fast_window = True
     score=0
 
     configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
@@ -35,7 +37,7 @@ def main():
     if carte.launch_level:
 
         level: Level = levels[name_level]
-        level.launch_level()
+        level.launch_level(fast_window)
 
     running = True
     click_coords = mp.personnage.get_position()
@@ -46,7 +48,6 @@ def main():
     while running:
         event = donne_ev()
         type_event = type_ev(event)
-
         if type_event == "Quitte":
             running = False
 

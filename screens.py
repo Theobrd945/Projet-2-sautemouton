@@ -127,12 +127,17 @@ class Level:
         self.dernier_point = 0
         self.points_trajectoire = []
 
-    def init_window(self):
-        cree_fenetre(self.width, self.height)
+    def init_window(self, fast_window = False):
+        if fast_window:
+            cree_fenetre(self.width, self.height, frequence=10000)
+        else:
+            cree_fenetre(self.width, self.height)
+
+
         image(500, 400, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
-    def launch_level(self) -> None:
-        self.init_window()
+    def launch_level(self, fast_window = False) -> None:
+        self.init_window(fast_window)
 
     def draw_player(self, coords: Couple, taille_joueur: Couple | None = None):
         taille_joueur = taille_joueur if taille_joueur else Couple(25, 25)
