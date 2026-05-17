@@ -238,7 +238,6 @@ class Configuration:
 
             elif mode == "blocs":
                 typebloc, pos, taille_x, taille_y = ligne.split(";")
-                print(ligne.split(";"))
                 taille = Couple[int](int(taille_x), int(taille_y))
 
                 x1, y1 = map(int, pos.split(","))

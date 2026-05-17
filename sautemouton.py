@@ -63,6 +63,8 @@ def main():
             efface("score")
             level.draw_score(score,level.draw_score(score, configs[name_level].highscore))
 
+        if type_event == "Touche" and touche(event) == 'enter': ...
+
 
         objectif_atteint = mp.update()
 
