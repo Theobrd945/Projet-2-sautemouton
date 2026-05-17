@@ -9,6 +9,8 @@ from multiplayer import Multi
 
 def main():
 
+    score=0
+
     configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
 
     images = ["img_level_1.png", "img_level_2_2.png","img_level_3_1.png"]
@@ -66,6 +68,10 @@ def main():
         if type_event == "ClicDroit":
             efface("direction_jump")
             mp.onclick(click_coords)
+            score+=1
+            efface("score")
+            level.draw_score(score,level.draw_score(score, configs[name_level].highscore))
+
 
         if type_event == "Touche" and touche(event) == 'space':
             click_coords = predictions.pop()
@@ -76,6 +82,7 @@ def main():
         objectif_atteint = mp.update()
 
         if objectif_atteint:
+            configs[name_level].save("level" + str(1+(name_level)) + ".txt",score)
             print("gagné!")
             running = False
 

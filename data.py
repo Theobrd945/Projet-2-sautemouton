@@ -200,6 +200,7 @@ class Configuration:
     def __init__(self,nom_niveaux):
         self.nom_niveaux=nom_niveaux
         self.personnage=None
+        self.highscore=None
         self.dico_bloc={}
         self.load(nom_niveaux)#dico avec comme cle le typebloc
         #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
@@ -209,8 +210,8 @@ class Configuration:
         return self.dico_bloc["objectif"][0]
 
 
-    def save(self,nom) -> None:
-        with open(nom, "w") as f:
+    def save(self,nom,score) -> None:
+        with open("all_levels/"+nom, "w") as f:
             f.write("[PERSONNAGE]\n")
             x, y = self.personnage.get_position()
             f.write(f"position={x},{y}\n")
@@ -221,6 +222,12 @@ class Configuration:
                 for bloc in liste_blocs:
                     x, y = bloc.get_position()
                     f.write(f"{bloc.get_typebloc()};{x},{y};{bloc.get_largeur()};{bloc.get_hauteur()}\n")
+            f.write("[HIGHSCORE]\n")
+            if  self.highscore is None or score<self.highscore:
+                self.highscore=score
+            f.write(f"highscore={self.highscore}\n")
+            print("sauvegarder")
+
 
     def load(self,nom_niveaux) -> None:
         with open(nom_niveaux, "r") as f:
@@ -245,6 +252,10 @@ class Configuration:
                 mode = "blocs"
                 continue
 
+            elif ligne == "[HIGHSCORE]":
+                mode= "score"
+                continue
+
             if mode == "personnage":
                 cle, valeur = ligne.split("=")
 
@@ -260,7 +271,6 @@ class Configuration:
 
             elif mode == "blocs":
                 typebloc, pos, largeur, hauteur = ligne.split(";")
-
                 x1, y1 = map(int, pos.split(","))
                 largeur = int(largeur)
                 hauteur = int(hauteur)
@@ -276,9 +286,9 @@ class Configuration:
 
                 else:
                     bloc = BlocPlateforme((x1, y1), typebloc, largeur, hauteur)
-
-
-
-
                 self.dico_bloc[typebloc].append(bloc)
+
+            elif mode == "score":
+                nom, self.highscore = ligne.split("=")
+                self.highscore = int(self.highscore)
         self.personnage = Personnage((x, y), largeur1, hauteur1)

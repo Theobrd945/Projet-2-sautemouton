@@ -176,6 +176,12 @@ class Level:
         for point in self.points_trajectoire:
             cercle(point[0], point[1], 5, couleur="white", remplissage="white", tag="jump")
 
+
+    def draw_score(self,score,highscore):
+        texte(0,0,"score: "+str(score),"white","white","nw",100,tag="score")
+        texte(0,100,"meilleur score: " + str(highscore),"white","white","nw",100,tag="score" )
+
+
     def draw_direction_jump(self, coords_player, coords_click):
         efface("direction_jump")
 
