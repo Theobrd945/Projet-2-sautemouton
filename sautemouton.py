@@ -48,6 +48,10 @@ def main():
         if type_event == "Quitte":
             running = False
 
+        if type_event == "Touche" and touche(event) == "m":
+
+            mp.personnage.set_position(initialize_position)
+
         if type_event == "ClicGauche":
             click_coords = abscisse(event), ordonnee(event)
             level.draw_direction_jump(mp.personnage.get_position(), click_coords)
@@ -56,11 +60,6 @@ def main():
             efface("direction_jump")
             mp.onclick(tuple_merge(click_coords))
 
-        if type_event == "Touche" and touche(event) == "m":
-
-            mp.personnage.set_position(initialize_position)
-
-        level.draw_jump(mp.personnage.get_position())
 
         objectif_atteint = mp.update()
 
@@ -68,6 +67,7 @@ def main():
             print("gagné!")
             running = False
 
+        level.draw_jump(mp.personnage.get_position())
         level.draw_player(mp.personnage.get_position())
 
         mise_a_jour()
