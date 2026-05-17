@@ -32,14 +32,8 @@ class MoteurPhysique:
     def __init__(self, config: Configuration, vmax: Couple,
                 gravite: float = 0.02, resistance: Callable[[Couple], Couple] = IDENTITE):
         self.config = config
-        
-        base = self.config.personnage
+        self.personnage = Personnage(self.config.personnage.get_position(), self.config.personnage.get_taille())
 
-        self.personnage = Personnage(
-            base.get_position(),
-            base.get_largeur(),
-            base.get_hauteur()
-        )
         self.vmax = vmax
         self.vmin = 0.05
         self.gravite = gravite
@@ -52,10 +46,8 @@ class MoteurPhysique:
             return
 
         self.onblock = False
-        curr_pos = tuple_merge(self.personnage.get_position())
-        self.vitesse += click - (curr_pos + Couple(self.personnage.get_largeur() // 2, self.personnage.get_hauteur() // 2))
-        # printwarn("click")
-        # print(f"{((click - curr_pos).x, (click - curr_pos).y) =}")
+        curr_pos = self.personnage.get_position()
+        self.vitesse += click - (curr_pos + self.personnage.get_taille().apply(lambda x : x // 2))
 
 
     def get_cote_collision(self, position_perso: Couple, taille_perso: Couple,
@@ -95,8 +87,8 @@ class MoteurPhysique:
         nouvelle_position_perso = position_perso + vitesse
         for liste_blocs in dico_bloc.values():
             for bloc in liste_blocs:
-                position_bloc = tuple_merge(bloc.get_position())
-                taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
+                position_bloc = bloc.get_position()
+                taille_bloc = bloc.get_taille()
 
                 if ((nouvelle_position_perso.x < position_bloc.x + taille_bloc.x)   and
                     (nouvelle_position_perso.x + taille_perso.x > position_bloc.x)  and
@@ -123,11 +115,11 @@ class MoteurPhysique:
         capped_speed.x = sign(capped_speed.x) * min(abs(capped_speed.x), self.vmax.x)
         capped_speed.y = sign(capped_speed.y) * min(abs(capped_speed.y), self.vmax.y)
 
-        position_perso = tuple_merge(self.personnage.get_position())
-        taille_perso = tuple_merge((self.personnage.get_largeur(), self.personnage.get_hauteur()))
+        position_perso = self.personnage.get_position()
+        taille_perso = self.personnage.get_taille()
 
         if capped_speed.x == 0 and capped_speed.y == 0:
-            self.personnage.set_position(couple_split(position_perso + capped_speed))
+            self.personnage.set_position(position_perso + capped_speed)
             return False
 
         bloc, direction = self.check_collision(position_perso, taille_perso, self.config.dico_bloc, capped_speed)
@@ -139,7 +131,7 @@ class MoteurPhysique:
             if not next_frame_collision:
                 self.onblock = False
 
-            self.personnage.set_position(couple_split(position_perso + capped_speed))
+            self.personnage.set_position(position_perso + capped_speed)
             return False
 
         # print(f"capped_speed: {capped_speed}")
@@ -148,8 +140,8 @@ class MoteurPhysique:
         if isinstance(bloc, BlocObjectif):
             return True
 
-        position_bloc = tuple_merge(bloc.get_position())
-        taille_bloc = Couple(bloc.get_largeur(), bloc.get_hauteur())
+        position_bloc = bloc.get_position()
+        taille_bloc = bloc.get_taille()
 
         if direction == GAUCHE:
             self.vitesse.x = capped_speed.x = 0.0
@@ -171,7 +163,7 @@ class MoteurPhysique:
         if direction == NUL_DIREC:
             printwarn("nul direc!", "ERROR")
 
-        self.personnage.set_position(couple_split(position_perso + capped_speed))
+        self.personnage.set_position(position_perso + capped_speed)
         return False
 
 
@@ -190,12 +182,9 @@ class MoteurPhysique:
         for _ in range(n):
             self.update()
             if not (dy_trim and self.vitesse.y == 0) and not (dx_trim and self.vitesse.x == 0):
-                predictions.append(tuple_merge(self.personnage.get_position()))
+                predictions.append(self.personnage.get_position())
 
-        # print(f"avant set_position: {tuple_merge(self.personnage.get_position())}")
         self.personnage.set_position(coord_save)
-        # print(f"après set_position: {tuple_merge(self.personnage.get_position())}")
-        # print(f"coord_save valait: {coord_save}")
         self.vitesse = speed_save
         self.onblock = onblock_save
         return predictions

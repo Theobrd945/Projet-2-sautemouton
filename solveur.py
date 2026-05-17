@@ -18,7 +18,7 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
         return (round(pos.x / 5) * 5, round(pos.y / 5) * 5)
 
     def get_etat():
-        pos = tuple_merge(moteur.personnage.get_position())
+        pos = moteur.personnage.get_position()
         return (pos, Couple(moteur.vitesse.x, moteur.vitesse.y), moteur.onblock)
 
     def restore_etat(etat):

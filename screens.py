@@ -1,6 +1,6 @@
-from fltk import *
-from time import *
-from math import *
+from fltk import abscisse, cercle, texte, ordonnee, ligne, fleche, cree_fenetre, image, donne_ev, type_ev, ferme_fenetre, mise_a_jour, efface, rectangle
+from data import Couple
+from time import time
 
 class HomeScreen:
 
@@ -13,10 +13,13 @@ class HomeScreen:
         self.width = 1000
         self.height = 800
 
-    def is_click_on_button(self, event_location) -> bool:
+    def clicked_button(self, event_location) -> bool:
+        abscisse_event, ordonnee_event = abscisse(event_location), ordonnee(event_location)
+        if abscisse_event and ordonnee_event:
+            return (self.btn_top_left <= abscisse_event <= self.btn_top_right
+                    and self.btn_bottom_left <= ordonnee_event <= self.btn_bottom_right)
 
-        return (self.btn_top_left <= abscisse(event_location) <= self.btn_top_right
-                and self.btn_bottom_left <= ordonnee(event_location) <= self.btn_bottom_right)
+        return False
 
     def init_window(self):
 
@@ -34,9 +37,9 @@ class HomeScreen:
         while running:
 
             ev = donne_ev()
-            tev: str = type_ev(ev)
+            tev: str | None = type_ev(ev)
 
-            if tev == "ClicGauche" and self.is_click_on_button(ev):
+            if tev == "ClicGauche" and self.clicked_button(ev):
 
                 running = False
 
@@ -70,49 +73,38 @@ class Map:
         self.launch_level = True
 
     def init_window(self):
-
         cree_fenetre(self.width, self.height)
+        image(500, 400, 'assets/carte2.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='carte')
 
-        x, y = 500, 400
+    def clicked_button(self, event_location, btn_top, btn_bot) -> bool:
+        abscisse_event, ordonnee_event = abscisse(event_location), ordonnee(event_location)
+        if abscisse_event and ordonnee_event:
+            return (self.btn_niveau_left <= abscisse_event <= self.btn_niveau_right
+                    and btn_top <= ordonnee_event <= btn_bot)
 
-        image(x, y, 'assets/carte2.png', largeur=self.width, hauteur=self.height, ancrage='center', tag='carte')
-
-    def isClick_on_button(self, event_location, btn_top, btn_bot) -> bool:
-
-        return (self.btn_niveau_left <= abscisse(event_location) <= self.btn_niveau_right
-                and btn_top <= ordonnee(event_location) <= btn_bot)
+        return False
 
     def choose_level(self):
-
         self.init_window()
-
         level_is = 0
 
         running = True
-
         while running:
-
             event = donne_ev()
             type_event = type_ev(event)
 
             if type_event == "ClicGauche":
 
-                if self.isClick_on_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
-
+                if self.clicked_button(event, self.btn_niveau3_top, self.btn_niveau3_bottom):
                     level_is = 2
-
                     running = False
 
-                elif self.isClick_on_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
-
+                elif self.clicked_button(event, self.btn_niveau2_top, self.btn_niveau2_bottom):
                     level_is = 1
-
                     running = False
 
-                elif self.isClick_on_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
-
+                elif self.clicked_button(event, self.btn_niveau1_top, self.btn_niveau1_bottom):
                     level_is = 0
-
                     running = False
 
             if type_event == 'Quitte':  # on sort de la boucle
@@ -120,52 +112,37 @@ class Map:
                 self.launch_level = False
 
             mise_a_jour()
-
         ferme_fenetre()
 
         return level_is
 
 
 class Level:
-
     def __init__(self, blocs, img) -> None:
-
         self.width = 1000
         self.height = 800
-
         self.blocs = blocs
         self.img = img
-
         self.dernier_point = 0
         self.points_trajectoire = []
 
     def init_window(self):
-
         cree_fenetre(self.width, self.height)
-
-        x, y = 500, 400
-
-        image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
+        image(500, 400, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
     def launch_level(self) -> None:
         self.init_window()
 
-    def draw_player(self, coords):
-
-        taille_joueur = 25
+    def draw_player(self, coords: Couple, taille_joueur: Couple | None = None):
+        taille_joueur = taille_joueur if taille_joueur else Couple(25, 25)
         efface("player")
-        rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
+        rectangle(coords.x, coords.y, coords.x + taille_joueur.x, coords.y + taille_joueur.y, couleur='red', remplissage='red', tag="player")
 
-    def draw_jump(self, coords):
-
-        maintenant = time()
-
+    def draw_jump(self, coords: Couple):
         intervalle = 0.006
-
+        maintenant = time()
         if maintenant - self.dernier_point >= intervalle:
-
             self.points_trajectoire.append(coords)
-
             self.dernier_point = maintenant
 
             if len(self.points_trajectoire) > 75:
@@ -174,7 +151,7 @@ class Level:
         efface("jump")
 
         for point in self.points_trajectoire:
-            cercle(point[0], point[1], 5, couleur="white", remplissage="white", tag="jump")
+            cercle(point.x, point.y, 5, couleur="white", remplissage="white", tag="jump")
 
 
     def draw_score(self,score,highscore):
@@ -184,31 +161,21 @@ class Level:
 
     def draw_direction_jump(self, coords_player, coords_click):
         efface("direction_jump")
+        distance = Couple.distance(coords_player, coords_click)
 
-        x1, y1 = coords_player
-        x2, y2 = coords_click
-
-        dx = x2 - x1
-        dy = y2 - y1
-        distance = sqrt(dx ** 2 + dy ** 2)
-
-        if distance > 300:
-            longueur = 150
-        else:
+        longueur = 150
+        if distance < 300:
             longueur = distance * 0.5
 
+        u = Couple()        # ??
         if distance != 0:
-            ux = dx / distance
-            uy = dy / distance
-        else:
-            ux = uy = 0
+            u.x = (coords_click.x - coords_player.x) / distance
+            u.y = (coords_click.y - coords_player.y) / distance
 
-        end_x = x1 + ux * longueur
-        end_y = y1 + uy * longueur
+        end = coords_player + (u * longueur)
 
-        ligne(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
-
-        fleche(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
+        ligne(coords_player.x, coords_player.y, end.x, end.y, couleur="white", epaisseur=5,tag="direction_jump")
+        fleche(coords_player.x, coords_player.y, end.x, end.y, couleur="white", epaisseur=5,tag="direction_jump")
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
