@@ -148,7 +148,7 @@ class Level:
 
         image(x, y, 'assets/' + self.img, largeur=self.width, hauteur=self.height, ancrage='center')
 
-    def launch_level(self):
+    def launch_level(self) -> None:
         self.init_window()
 
     def draw_player(self, coords):
