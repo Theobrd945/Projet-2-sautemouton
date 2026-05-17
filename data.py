@@ -2,7 +2,7 @@ from math import sqrt
 from typing import Callable, Protocol
 
 
-"""class Queue[T]:
+class Queue[T]:
     def __init__(self, queue: list[T] | None = None) -> None:
         self.queue = queue if queue else []
 
@@ -48,15 +48,15 @@ class Stack[T]:
         for item in reversed(self.stack):
             s += f"{item}, "
         return f"[{s}]" if s else "[empty]"
-"""
-class Couple:
-    def __init__(self, x: float, y: float):
+
+class Couple[T]:
+    def __init__(self, x: float | int | T = 0, y: float | int | T = 0):
         self.x = x
         self.y = y
 
     """ couple (couple, y) de réels """
     # distribue l'application sur les membres du couple
-    def apply(self, application: Callable[..., float]) -> 'Couple':
+    def apply(self, application: Callable[..., float | int]) -> 'Couple':
         self.x = application(self.x)
         self.y = application(self.y)
         return self
@@ -65,15 +65,18 @@ class Couple:
         return Couple(self.x, self.y)
 
     def norme(self) -> float:
+        assert (type(self.x) is float or type(self.x) is int) and (type(self.y) is float or type(self.y) is int)
         return sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other: 'Couple') -> 'Couple':
+        assert (type(self.x) is float or type(self.x) is int) and (type(self.y) is float or type(self.y) is int)
         return Couple(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: 'Couple') -> 'Couple':
+        assert (type(self.x) is float or type(self.x) is int) and (type(self.y) is float or type(self.y) is int)
         return Couple(self.x - other.x, self.y - other.y)
 
-    def __mul__(self, other: float) -> 'Couple':
+    def __mul__(self, other: float | int) -> 'Couple':
         return self.apply(lambda v: v * other)
 
     def __str__(self) -> str:
