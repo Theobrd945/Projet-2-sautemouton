@@ -193,3 +193,14 @@ class Level2(Level):
 class Level3(Level):
     def __init__(self, blocs, img) -> None:
         super().__init__(blocs, img)
+
+def screen_end():
+    cree_fenetre(1000,800)
+    image(500, 400, 'assets/image_fin.png', largeur=1000, hauteur=800, ancrage='center', tag='carte')
+    while True:
+        event=donne_ev()
+        type_event=type_ev(event)
+        if type_event=="Quitte":
+            break
+        mise_a_jour()
+    ferme_fenetre()
