@@ -16,4 +16,4 @@ plateform;825,485;175;115
 plateform;440,485;150;110
 objectif;120,435;75;75
 [HIGHSCORE]
-highscore=0
+highscore=100000000
