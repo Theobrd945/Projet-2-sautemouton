@@ -1,16 +1,18 @@
 from copy import deepcopy
 from physique import MoteurPhysique, tuple_merge, Couple, strategies_resistance
 from screens import HomeScreen, Level, Map, Level1, Level2, Level3
-from data import Configuration, Queue, couple_split
+from data import Configuration, couple_split
 from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, ferme_fenetre, rectangle, efface, fleche
 from solveur import naive_solver
 from multiplayer import Multi
 
 
 def main():
+
     score=0
-    images = ["assets/img_level_1.png", "assets/img_level_2_2.png","assets/img_level_3_1.png"]
-    configs = [Configuration(image) for image in images]
+
+    configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
+    images = ["img_level_1.png", "img_level_2_2.png","img_level_3_1.png"]
 
     home_screen = HomeScreen()
     home_screen.launch()
@@ -25,7 +27,6 @@ def main():
 
     mp = MoteurPhysique(configs[name_level], vmax=Couple(10, 20), gravite=7, resistance=strategies_resistance["quatre_vingt"])
     levels = [Level1(configs[0].dico_bloc, images[0]), Level2(configs[1].dico_bloc, images[1])]
-    solutions = Queue()
 
     level = levels[0]
     if carte.launch_level:
@@ -60,13 +61,6 @@ def main():
             efface("highscore")
 
             level.draw_score(score,level.draw_score(score, configs[name_level].highscore))
-
-        if type_event == "Touche" and touche(event) == "enter":
-            solutions = naive_solver(mp)
-
-        if type_event == "Touche" and touche(event) == "space":
-            ...
-
 
 
         objectif_atteint = mp.update()
