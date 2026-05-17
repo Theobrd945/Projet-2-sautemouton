@@ -33,8 +33,8 @@ class Multi :
 
         self.init_window()
 
-        self.mp_1.personnage.set_position((300, 435))
-        self.mp_2.personnage.set_position((700, 435))
+        self.mp_1.personnage.set_position((100, 500))
+        self.mp_2.personnage.set_position((900, 500))
 
         tour = 0
 
@@ -64,7 +64,11 @@ class Multi :
             objectif_atteint_2 = self.mp_2.update()
 
             if objectif_atteint_1:
-                print("gagné!")
+                print("gagné pour le joueur 1!")
+                running = False
+
+            if objectif_atteint_2:
+                print("gagné pour le joueur 2!")
                 running = False
 
             self.draw_players_1(self.mp_1.personnage.get_position())
