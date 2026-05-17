@@ -6,17 +6,27 @@ from fltk import donne_ev, touche, type_ev, abscisse, ordonnee, mise_a_jour, fer
 from solveur import naive_solver
 
 
-def debut():
 
-    configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt")]
+def main():
 
-    images = ["img_level_1.png", "img_level_2_2.png", "img_level_3.png"]
+    configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
+
+    images = ["img_level_1.png", "img_level_2_2.png","img_level_3.png"]
 
     home_screen = HomeScreen()
     home_screen.launch()
 
     carte = Map()
     name_level = carte.choose_level()
+
+    if name_level == 2:
+
+        running = False
+
+        multi = Multi(configs[name_level], images[name_level])
+        multi.players()
+
+        return 0
 
     mp = MoteurPhysique(configs[name_level], vmax=Couple(10, 20), gravite=7, resistance=strategies_resistance["quatre_vingt"])
     sandbox = deepcopy(mp)
@@ -26,7 +36,10 @@ def debut():
 
     levels = [Level1(configs[0].dico_bloc, images[0]), Level2(configs[1].dico_bloc, images[1])]
 
+<<<<<<< HEAD
     level = levels[0]
+=======
+>>>>>>> 44bea9bdf03666957fec60822660f6f5315099ca
     if carte.launch_level:
 
         level: Level = levels[name_level]
@@ -35,11 +48,12 @@ def debut():
     running = True
     click_coords = tuple_merge(mp.personnage.get_position())
 
+    initialize_position = mp.personnage.get_position()
+
     while running:
 
         event = donne_ev()
         type_event = type_ev(event)
-
 
         if type_event == "Quitte":
             running = False
@@ -57,6 +71,10 @@ def debut():
             mp.onclick(click_coords)
             print(f"{mp.personnage.get_position() = }")
 
+        if type_event == "Touche" and touche(event) == "m":
+
+            mp.personnage.set_position(initialize_position)
+
         level.draw_jump(mp.personnage.get_position())
 
         objectif_atteint = mp.update()
@@ -72,4 +90,4 @@ def debut():
     ferme_fenetre()
 
 
-debut()
+main()

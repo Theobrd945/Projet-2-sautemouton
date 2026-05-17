@@ -1,6 +1,7 @@
 from fltk import *
 from data import *
 from time import *
+from math import *
 
 class HomeScreen:
 
@@ -150,23 +151,8 @@ class Level:
     def launch_level(self) -> None:
         self.init_window()
 
-    def draw_blocs(self):
-        for typebloc, liste_blocs in self.blocs.items():
-            for bloc in liste_blocs:
-                x, y = bloc.get_position()
-                largeur = bloc.get_largeur()
-                hauteur = bloc.get_hauteur()
-
-                if typebloc == "glace":
-                    image(x+largeur//2,y+hauteur//2,"assets/glace.png",largeur,hauteur)
-                elif typebloc == "objectif":
-                    image(x+largeur//2,y+hauteur//2,"assets/objectif.png",largeur,hauteur)
-                elif typebloc == "platform":
-                    image(x+largeur//2,y+hauteur//2,"assets/terre.png",largeur,hauteur+10)
-
-
-
     def draw_player(self, coords):
+
         taille_joueur = 25
         efface("player")
         rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
@@ -189,19 +175,35 @@ class Level:
         efface("jump")
 
         for point in self.points_trajectoire:
-            cercle(
-                point[0],
-                point[1],
-                5,
-                couleur="white",
-                remplissage="white",
-                tag="jump"
-            )
-
+            cercle(point[0], point[1], 5, couleur="white", remplissage="white", tag="jump")
 
     def draw_direction_jump(self, coords_player, coords_click):
         efface("direction_jump")
-        fleche(coords_player[0], coords_player[1], coords_click[0], coords_click[1], couleur="white", epaisseur=5, tag="direction_jump")
+
+        x1, y1 = coords_player
+        x2, y2 = coords_click
+
+        dx = x2 - x1
+        dy = y2 - y1
+        distance = sqrt(dx ** 2 + dy ** 2)
+
+        if distance > 300:
+            longueur = 150
+        else:
+            longueur = distance * 0.5
+
+        if distance != 0:
+            ux = dx / distance
+            uy = dy / distance
+        else:
+            ux = uy = 0
+
+        end_x = x1 + ux * longueur
+        end_y = y1 + uy * longueur
+
+        ligne(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
+
+        fleche(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
