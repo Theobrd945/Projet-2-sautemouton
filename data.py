@@ -171,6 +171,7 @@ class Configuration:
         self.nom_niveaux = nom_niveaux
         self.personnage = Personnage(Couple(), Couple())
         self.dico_bloc={}
+        self.highscore=None
         self.load(nom_niveaux)
 
     def get_objectif(self) -> Bloc:
