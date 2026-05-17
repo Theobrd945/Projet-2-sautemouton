@@ -142,7 +142,7 @@ class Level:
     def draw_player(self, coords: Couple, taille_joueur: Couple | None = None):
         taille_joueur = taille_joueur if taille_joueur else Couple(25, 20)
         efface("player")
-        rectangle(coords.x, coords.y, coords.x + taille_joueur.x, coords.y + taille_joueur.y, couleur='red', remplissage='red', tag="player")
+        image(coords.x,coords.y,"assets/img_mouton_2.png",largeur=75,hauteur=75,tag="player")
 
     def draw_score(self,score,highscore):
         texte(0,0,"score: "+str(score),"white","white","nw",100,tag="score")
