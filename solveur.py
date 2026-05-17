@@ -1,4 +1,4 @@
-from fltk import cercle
+from fltk import cercle, mise_a_jour
 from physique import Couple, MoteurPhysique
 from data import Queue
 
@@ -56,14 +56,17 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
 
         moteur.onclick(click_relatif_stocke)
         reussite = False
-        for _ in range(200):
+        essais_max = 0
+        while moteur.vitesse != Couple() and essais_max < 100:
             id = id_cercles.pop() if not id_cercles.is_empty() else "ID_CERCLE1"
             id_cercles.push(
                 cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'gray', 'gray', tag=id)
             )
+            mise_a_jour()
             reussite = moteur.update()
+            essais_max += 1
 
-            if reussite or moteur.onblock:
+            if reussite or moteur.vitesse == Couple():
                 break
 
         if reussite:

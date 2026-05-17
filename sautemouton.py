@@ -64,6 +64,7 @@ def main():
             score+=1
             efface("score")
             efface("highscore")
+            level.draw_score(score, configs[name_level].highscore)
 
         if type_event == "Touche" and touche(event) == 'Return':
             curr_pos = mp.personnage.get_position()
