@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Callable, Protocol
+from typing import Callable
 
 
 class Queue[T]:
@@ -115,108 +115,76 @@ def ssqrt(x: float) -> float: return -sqrt(abs(x)) if x < 0 else sqrt(x)
 
 
 class Personnage:
+    def __init__(self, position: Couple, taille: Couple) -> None:
+        self.position: Couple = position
+        self.taille: Couple = taille
 
-    def __init__(self, position,largeur,hauteur) -> None:
-        self.__position = position
-        self.__largeur = largeur
-        self.__hauteur = hauteur
-
-
-    def get_position(self) -> tuple:
-        return self.__position
-
-    def get_largeur(self) -> float:
-        return self.__largeur
-
-    def get_hauteur(self) -> float:
-        return self.__hauteur
-
-    def set_position(self,position) -> None:
-        self.__position = position
-
-    def move(self, dx, dy):
-        x, y = self.__position
-        self.__position = (x + dx, y + dy)
-
-    def set_largeur(self,largeur):
-        self.__largeur=largeur
-
-    def set_hauteur(self,hauteur):
-        self.__hauteur=hauteur
+    def get_position(self) -> Couple:
+        return self.position
 
     def get_taille(self) -> Couple:
-        return Couple(self.get_largeur(), self.get_hauteur())
+        return self.taille
 
+    def set_position(self, position: Couple) -> None:
+        self.position = position
 
-class Plateforme(Protocol):
-    def get_position(self) -> tuple: ...
-    def get_taille(self) -> Couple: ...
 
 class Bloc:
-    def __init__(self, position, typebloc, largeur, hauteur)-> None:
-        self.__position = position #(x,y)
-        self.__typebloc = typebloc   #objet
-        self.__largeur = largeur
-        self.__hauteur = hauteur
+    def __init__(self, position: Couple, typebloc: str, taille: Couple)-> None:
+        self.position = position #(x,y)
+        self.type_bloc = typebloc   #objet
+        self.taille = taille
 
     def get_typebloc(self) -> str:
-        return self.__typebloc
+        return self.type_bloc
 
-    def get_position(self) -> tuple:
-        return self.__position
-
-    def get_largeur(self) -> float:
-        return self.__largeur
-
-    def get_hauteur(self) -> float:
-        return self.__hauteur
+    def get_position(self) -> Couple:
+        return self.position
 
     def get_taille(self) -> Couple:
-        return Couple(self.get_largeur(), self.get_hauteur())
+        return self.taille
 
 
 class BlocObjectif(Bloc):
-    def __init__(self, position, largeur, hauteur) -> None:
-        super().__init__(position, "objectif", largeur, hauteur)
+    def __init__(self, position, taille) -> None:
+        super().__init__(position, "objectif", taille)
         self.solide = False
         self.viscosite = 0.0
 
 VISCOSITE_GLACE = 5.0
 class BlocGlace(Bloc):
-    def __init__(self, position, largeur, hauteur) -> None:
-        super().__init__(position, "glace", largeur, hauteur)
+    def __init__(self, position, taille) -> None:
+        super().__init__(position, "glace", taille)
         self.solide = True
         self.viscosite = VISCOSITE_GLACE
 
 class BlocPlateforme(Bloc):
-    def __init__(self, position, typebloc, largeur, hauteur) -> None:
-        super().__init__(position, typebloc, largeur, hauteur)
+    def __init__(self, position, taille) -> None:
+        super().__init__(position, "plateform", taille)
         self.solide = True
         self.viscosite = 1.0
 
 
 class Configuration:
 
-    def __init__(self,nom_niveaux):
-        self.nom_niveaux=nom_niveaux
-        self.personnage=None
+    def __init__(self, nom_niveaux: str):
+        self.nom_niveaux = nom_niveaux
+        self.personnage = Personnage(Couple(), Couple())
         self.dico_bloc={}
-        self.load(nom_niveaux)#dico avec comme cle le typebloc
-        #exemple dico_bloc={ "feu" : objet1bloc,objet2bloc,objet3,}
-        # print(self.dico_bloc)
+        self.load(nom_niveaux)
 
     def get_objectif(self) -> Bloc:
         return self.dico_bloc["objectif"][0]
 
-
-    def save(self,nom) -> None:
+    def save(self, nom) -> None:
+        position = self.personnage.get_position()
         with open(nom, "w") as f:
             f.write("[PERSONNAGE]\n")
-            x, y = self.personnage.get_position()
-            f.write(f"position={x},{y}\n")
-            f.write(f"largeur={self.personnage.get_largeur()}\n")
-            f.write(f"hauteur={self.personnage.get_hauteur()}\n\n")
+            f.write(f"position={position}\n")
+            f.write(f"largeur={self.personnage.get_taille().x}\n")
+            f.write(f"hauteur={self.personnage.get_taille().y}\n\n")
             f.write("[BLOCS]\n")
+
             for liste_blocs in self.dico_bloc.values():
                 for bloc in liste_blocs:
                     x, y = bloc.get_position()
@@ -228,7 +196,6 @@ class Configuration:
 
         mode = None
         self.dico_bloc = {}
-        self.personnage = None
         x = 0
         y = 0
         largeur1 = 0
@@ -259,26 +226,22 @@ class Configuration:
 
 
             elif mode == "blocs":
-                typebloc, pos, largeur, hauteur = ligne.split(";")
+                typebloc, pos, taille_x, taille_y = ligne.split(";")
+                taille = Couple[int](int(taille_x), int(taille_y))
 
                 x1, y1 = map(int, pos.split(","))
-                largeur = int(largeur)
-                hauteur = int(hauteur)
 
                 if typebloc not in self.dico_bloc:
                     self.dico_bloc[typebloc] = []
 
-                if typebloc=="glace":
-                    bloc = BlocGlace((x1, y1), largeur, hauteur)
+                if typebloc == "glace":
+                    bloc = BlocGlace(Couple[int](x1, y1), taille)
 
-                elif typebloc== "objectif":
-                    bloc = BlocObjectif((x1, y1), largeur, hauteur)
+                elif typebloc == "objectif":
+                    bloc = BlocObjectif(Couple[int](x1, y1), taille)
 
                 else:
-                    bloc = BlocPlateforme((x1, y1), typebloc, largeur, hauteur)
-
-
-
+                    bloc = BlocPlateforme(Couple[int](x1, y1), taille)
 
                 self.dico_bloc[typebloc].append(bloc)
-        self.personnage = Personnage((x, y), largeur1, hauteur1)
+        self.personnage = Personnage(Couple(x, y), Couple(largeur1, hauteur1))
