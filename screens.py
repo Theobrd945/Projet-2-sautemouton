@@ -1,6 +1,7 @@
 from fltk import *
 from data import *
 from time import *
+from math import *
 
 class HomeScreen:
 
@@ -167,6 +168,7 @@ class Level:
 
 
     def draw_player(self, coords):
+
         taille_joueur = 25
         efface("player")
         rectangle(coords[0], coords[1], coords[0] + taille_joueur, coords[1] + taille_joueur, couleur='red', remplissage='red', tag="player")
@@ -189,16 +191,7 @@ class Level:
         efface("jump")
 
         for point in self.points_trajectoire:
-            cercle(
-                point[0],
-                point[1],
-                5,
-                couleur="white",
-                remplissage="white",
-                tag="jump"
-            )
-
-    from math import sqrt
+            cercle(point[0], point[1], 5, couleur="white", remplissage="white", tag="jump")
 
     def draw_direction_jump(self, coords_player, coords_click):
         efface("direction_jump")
@@ -224,15 +217,9 @@ class Level:
         end_x = x1 + ux * longueur
         end_y = y1 + uy * longueur
 
-        ligne(x1, y1, end_x, end_y,
-              couleur="white",
-              epaisseur=5,
-              tag="direction_jump")
+        ligne(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
 
-        fleche(x1, y1, end_x, end_y,
-               couleur="white",
-               epaisseur=5,
-               tag="direction_jump")
+        fleche(x1, y1, end_x, end_y, couleur="white", epaisseur=5,tag="direction_jump")
 
 class Level1(Level):
     def __init__(self, blocs, img) -> None:
