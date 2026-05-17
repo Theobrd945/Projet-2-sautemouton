@@ -1,8 +1,10 @@
-from physique import Couple, MoteurPhysique, tuple_merge
+from fltk import cercle
+from physique import Couple, MoteurPhysique
 from data import Queue
 
 
 def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queue[Couple], bool]:
+    id_cercles = Queue()
     clicks_solution = Queue[Couple]()
 
     pas = 50
@@ -23,7 +25,7 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
 
     def restore_etat(etat):
         pos, vitesse, onblock = etat
-        moteur.personnage.set_position((pos.x, pos.y))
+        moteur.personnage.set_position(pos)
         moteur.vitesse = Couple(vitesse.x, vitesse.y)
         moteur.onblock = onblock
 
@@ -32,14 +34,14 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
     key_initial = position_to_key(etat_initial[0])
     visites.add(key_initial)
 
-    # pile : (etat_au_moment_d_arriver, chemin_de_clicks, key_de_ce_noeud, index_prochain_click)
+    # etat_au_moment_d_arriver, chemin_de_clicks, key_de_ce_noeud, index_prochain_click
     pile = [(etat_initial, [], key_initial, 0)]
     essais = 0
 
     while pile and essais < essais_max:
         etat, chemin, key, idx_click = pile[-1]
 
-        # plus de clicks à essayer → backtrack, libère cette position
+        # backtrack si plus rien a essayer
         if idx_click >= len(clicks_possibles):
             pile.pop()
             visites.discard(key)
@@ -48,14 +50,19 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
         # avance l'index pour la prochaine fois
         pile[-1] = (etat, chemin, key, idx_click + 1)
 
-        # joue le click depuis l'état de ce noeud
+        # joue le click
         restore_etat(etat)
         click_relatif_stocke = clicks_possibles[idx_click]
 
         moteur.onclick(click_relatif_stocke)
         reussite = False
         for _ in range(200):
+            id = id_cercles.pop() if not id_cercles.is_empty() else "ID_CERCLE1"
+            id_cercles.push(
+                cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'white', tag=id)
+            )
             reussite = moteur.update()
+
             if reussite or moteur.onblock:
                 break
 

@@ -1,6 +1,7 @@
-from fltk import abscisse, cercle, texte, ordonnee, ligne, fleche, cree_fenetre, image, donne_ev, type_ev, ferme_fenetre, mise_a_jour, efface, rectangle
+from fltk import abscisse, cercle, ordonnee, ligne, fleche, cree_fenetre, image, donne_ev, texte, type_ev, ferme_fenetre, mise_a_jour, efface, rectangle
 from data import Couple
 from time import time
+from math import sqrt
 
 class HomeScreen:
 
@@ -138,6 +139,10 @@ class Level:
         efface("player")
         rectangle(coords.x, coords.y, coords.x + taille_joueur.x, coords.y + taille_joueur.y, couleur='red', remplissage='red', tag="player")
 
+    def draw_score(self,score,highscore):
+        texte(0,0,"score: "+str(score),"white","white","nw",100,tag="score")
+        texte(0,100,"meilleur score: " + str(highscore),"white","white","nw",100,tag="score")
+
     def draw_jump(self, coords: Couple):
         intervalle = 0.006
         maintenant = time()
@@ -164,7 +169,7 @@ class Level:
         distance = Couple.distance(coords_player, coords_click)
 
         longueur = 150
-        if distance < 300:
+        if distance <= 300:
             longueur = distance * 0.5
 
         u = Couple()        # ??
