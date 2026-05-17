@@ -1,19 +1,6 @@
 [PERSONNAGE]
-position=850,455
+position=850, 455
 largeur=25
 hauteur=25
 
 [BLOCS]
-mur;0,0;1;800
-mur;0,800;999;800
-mur;1000,800;998;0
-mur;0,0;999;0
-platform;0,715;1000;85
-platform;0,600;125;115
-platform;0,485;225;115
-platform;875,600;125;115
-platform;825,485;175;115
-platform;440,485;150;110
-objectif;120,435;75;75
-[HIGHSCORE]
-highscore=4

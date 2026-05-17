@@ -59,7 +59,7 @@ def naive_solver(moteur: MoteurPhysique, essais_max: int = 500000) -> tuple[Queu
         for _ in range(200):
             id = id_cercles.pop() if not id_cercles.is_empty() else "ID_CERCLE1"
             id_cercles.push(
-                cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'white', tag=id)
+                cercle(moteur.personnage.get_position().x, moteur.personnage.get_position().y, 2, 'gray', 'gray', tag=id)
             )
             reussite = moteur.update()
 
