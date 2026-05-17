@@ -1,5 +1,4 @@
 from fltk import *
-from data import *
 from time import *
 
 class HomeScreen:
