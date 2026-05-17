@@ -23,7 +23,7 @@ class HomeScreen:
 
     def init_window(self):
 
-        cree_fenetre(self.width, self.height, frequence=60)
+        cree_fenetre(self.width, self.height)
 
         x, y = 500, 400
         image(x, y, fichier='assets/img3.jpg', largeur=self.width, hauteur=self.height, ancrage='center', tag='im')

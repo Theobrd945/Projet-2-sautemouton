@@ -60,8 +60,7 @@ def main():
             efface("score")
             efface("highscore")
 
-            level.draw_score(score,level.draw_score(score, configs[name_level].highscore))
-
+            level.draw_score(score, configs[name_level].highscore)
 
         objectif_atteint = mp.update()
 
