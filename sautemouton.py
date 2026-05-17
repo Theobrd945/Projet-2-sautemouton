@@ -8,11 +8,10 @@ from multiplayer import Multi
 
 
 def main():
-
     score=0
-
-    configs = [Configuration("all_levels/level1.txt"), Configuration("all_levels/level2.txt"), Configuration("all_levels/level3.txt")]
     images = ["img_level_1.png", "img_level_2_2.png","img_level_3_1.png"]
+    configs = [Configuration(image) for image in images]
+
     home_screen = HomeScreen()
     home_screen.launch()
     carte = Map()
