@@ -57,8 +57,8 @@ def main():
             mp.onclick(click_coords)
             score+=1
             efface("score")
-            level.draw_score(score,level.draw_score(score, configs[name_level].highscore))
-
+            efface("highscore")
+            level.draw_score(score, configs[name_level].highscore)
 
         objectif_atteint = mp.update()
 

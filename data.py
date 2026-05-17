@@ -170,7 +170,6 @@ class Configuration:
     def __init__(self, nom_niveaux: str):
         self.nom_niveaux = nom_niveaux
         self.personnage = Personnage(Couple(), Couple())
-        self.highscore=None
         self.dico_bloc={}
         self.load(nom_niveaux)
 
@@ -181,15 +180,15 @@ class Configuration:
         position = self.personnage.get_position()
         with open("all_levels/"+nom, "w") as f:
             f.write("[PERSONNAGE]\n")
-            f.write(f"position={position}\n")
+            f.write(f"position={position.x},{position.y}\n")
             f.write(f"largeur={self.personnage.get_taille().x}\n")
             f.write(f"hauteur={self.personnage.get_taille().y}\n\n")
             f.write("[BLOCS]\n")
 
             for liste_blocs in self.dico_bloc.values():
                 for bloc in liste_blocs:
-                    x, y = bloc.get_position()
-                    f.write(f"{bloc.get_typebloc()};{x},{y};{bloc.get_largeur()};{bloc.get_hauteur()}\n")
+                    position_bloc= bloc.get_position()
+                    f.write(f"{bloc.get_typebloc()};{position_bloc.x},{position_bloc.y};{bloc.get_taille().x};{bloc.get_taille().y}\n")
             f.write("[HIGHSCORE]\n")
             if  self.highscore is None or score<self.highscore:
                 self.highscore=score
