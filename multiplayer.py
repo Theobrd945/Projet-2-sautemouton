@@ -18,11 +18,11 @@ class Multi :
 
     def draw_players_1(self, cords_player_1: Couple):
         efface("player_1")
-        image(cords_player_1.x,cords_player_1.y,"assets/img_mouton_2.png",largeur=75,hauteur=75,tag="player")
+        image(cords_player_1.x,cords_player_1.y,"assets/img_mouton_2.png",largeur=75,hauteur=75,tag="player_1")
 
     def draw_players_2(self, cords_player_2: Couple):
         efface("player_2")
-        image(cords_player_2.x,cords_player_2.y,"assets/img_mouton_3.png",largeur=75,hauteur=75,tag="player")
+        image(cords_player_2.x,cords_player_2.y,"assets/img_mouton_3.png",largeur=75,hauteur=75,tag="player_2")
 
     def draw_direction_jump(self, coords_player: Couple, coords_click: Couple):
         efface("direction_jump")
